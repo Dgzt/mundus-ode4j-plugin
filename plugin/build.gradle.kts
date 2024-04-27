@@ -28,9 +28,14 @@ dependencies {
     api("com.badlogicgames.gdx:gdx:1.12.0")
     kapt("org.pf4j:pf4j:3.11.0")
 
-    implementation("com.github.jamestkhan.mundus:commons:master-SNAPSHOT")
-    implementation("com.github.jamestkhan.mundus:plugin-api:master-SNAPSHOT")
-    implementation("com.github.jamestkhan.mundus:editor-commons:master-SNAPSHOT")
+    implementation("com.github.Dgzt.Mundus:commons:plugin-new-component-SNAPSHOT")
+    implementation("com.github.Dgzt.Mundus:plugin-api:plugin-new-component-SNAPSHOT")
+    implementation("com.github.Dgzt.Mundus:editor-commons:plugin-new-component-SNAPSHOT")
+
+
+//    implementation("com.github.jamestkhan.mundus:commons:master-SNAPSHOT")
+//    implementation("com.github.jamestkhan.mundus:plugin-api:master-SNAPSHOT")
+//    implementation("com.github.jamestkhan.mundus:editor-commons:master-SNAPSHOT")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
