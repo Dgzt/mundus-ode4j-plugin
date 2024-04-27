@@ -46,14 +46,14 @@ java {
 }
 
 tasks.withType<Jar> {
-    archiveFileName.set("your-plugin.jar")
+    archiveFileName.set("ode4j-plugin.jar")
 
     // Otherwise you'll get a "No main manifest attribute" error
     manifest {
-        attributes["Plugin-Class"]= "com.github.your_name.your_plugin.YourPlugin"
-        attributes["Plugin-Id"] = "your-plugin"
-        attributes["Plugin-Provider"] = "Your Name"
-        attributes["Plugin-Version"] = "0.0.1"
+        attributes["Plugin-Class"]= "com.github.dgzt.mundus.plugin.ode4j.MundusOde4jPlugin"
+        attributes["Plugin-Id"] = "ode4j-plugin"
+        attributes["Plugin-Provider"] = "Tibor Zsuro (Dgzt)"
+        attributes["Plugin-Version"] = "0.0.1-SNAPSHOT"
     }
 }
 
