@@ -28,6 +28,8 @@ class MundusOde4jPlugin : Plugin() {
 
     @Extension
     class Ode4jComponentExtension : ComponentExtension {
+        override fun getComponentType(): Component.Type = Component.Type.PHYSICS
+
         override fun getComponentName(): String = "Ode4j Physics"
 
         override fun createComponent(gameObject: GameObject): Component = Ode4jPhysicsComponent(gameObject)
