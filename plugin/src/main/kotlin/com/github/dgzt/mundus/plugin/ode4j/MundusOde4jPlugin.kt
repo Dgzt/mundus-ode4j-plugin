@@ -31,6 +31,10 @@ class MundusOde4jPlugin : Plugin() {
         override fun getComponentName(): String = "Ode4j Physics"
 
         override fun createComponent(gameObject: GameObject): Component = Ode4jPhysicsComponent(gameObject)
+
+        override fun setupComponentInspectorWidget(rootWidget: RootWidget) {
+            rootWidget.addLabel("TODO")
+        }
     }
 
 }
