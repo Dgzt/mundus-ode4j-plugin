@@ -37,13 +37,8 @@ class MundusOde4jPlugin : Plugin() {
 
         override fun createComponent(gameObject: GameObject): Component = Ode4jPhysicsComponent(gameObject)
 
-        override fun setupComponentInspectorWidget(rootWidget: RootWidget) {
-            val types = Array<String>()
-            types.add("Box")
-            rootWidget.addSelectBox(types) {
-                // NOOP
-            }
-        }
+        override fun setupComponentInspectorWidget(component: Component, rootWidget: RootWidget) =
+            ComponentWidgetCreator.setup(component as Ode4jPhysicsComponent, rootWidget)
     }
 
 }
