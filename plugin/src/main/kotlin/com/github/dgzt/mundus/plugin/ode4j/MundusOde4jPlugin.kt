@@ -2,6 +2,7 @@ package com.github.dgzt.mundus.plugin.ode4j
 
 import com.badlogic.gdx.utils.OrderedMap
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent
+import com.github.dgzt.mundus.plugin.ode4j.constant.SaveConstant
 import com.github.dgzt.mundus.plugin.ode4j.creator.ComponentCreator
 import com.github.dgzt.mundus.plugin.ode4j.creator.ComponentWidgetCreator
 import com.mbrlabs.mundus.commons.scene3d.GameObject
@@ -45,13 +46,16 @@ class MundusOde4jPlugin : Plugin() {
         override fun getComponentConfig(component: Component): OrderedMap<String, String>? {
             if (component is Ode4jPhysicsComponent) {
                 val map = OrderedMap<String, String>()
-                map.put("shape", "box")
+                map.put(SaveConstant.SHAPE, component.shapeType.name)
 
                 return map
             } else {
                 return null
             }
         }
+
+        override fun loadComponentConfig(gameObject: GameObject, config: OrderedMap<String, String>): Component =
+            ComponentCreator.create(gameObject, config)
     }
 
 }
