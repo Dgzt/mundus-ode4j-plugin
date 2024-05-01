@@ -1,7 +1,9 @@
 package com.github.dgzt.mundus.plugin.ode4j
 
-import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.OrderedMap
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent
+import com.github.dgzt.mundus.plugin.ode4j.creator.ComponentCreator
+import com.github.dgzt.mundus.plugin.ode4j.creator.ComponentWidgetCreator
 import com.mbrlabs.mundus.commons.scene3d.GameObject
 import com.mbrlabs.mundus.commons.scene3d.components.Component
 import com.mbrlabs.mundus.pluginapi.ComponentExtension
@@ -35,10 +37,21 @@ class MundusOde4jPlugin : Plugin() {
 
         override fun getComponentName(): String = "Ode4j Physics"
 
-        override fun createComponent(gameObject: GameObject): Component = Ode4jPhysicsComponent(gameObject)
+        override fun createComponent(gameObject: GameObject): Component = ComponentCreator.create(gameObject)
 
         override fun setupComponentInspectorWidget(component: Component, rootWidget: RootWidget) =
             ComponentWidgetCreator.setup(component as Ode4jPhysicsComponent, rootWidget)
+
+        override fun getComponentConfig(component: Component): OrderedMap<String, String>? {
+            if (component is Ode4jPhysicsComponent) {
+                val map = OrderedMap<String, String>()
+                map.put("shape", "box")
+
+                return map
+            } else {
+                return null
+            }
+        }
     }
 
 }

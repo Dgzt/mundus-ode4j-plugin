@@ -1,16 +1,14 @@
-package com.github.dgzt.mundus.plugin.ode4j
+package com.github.dgzt.mundus.plugin.ode4j.creator
 
 import com.badlogic.gdx.utils.Array
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent
-import com.mbrlabs.mundus.commons.scene3d.GameObject
-import com.mbrlabs.mundus.commons.scene3d.components.Component
-import com.mbrlabs.mundus.commons.scene3d.components.ModelComponent
+import com.github.dgzt.mundus.plugin.ode4j.util.GameObjectUtils
 import com.mbrlabs.mundus.pluginapi.ui.RootWidget
 
 object ComponentWidgetCreator {
 
     fun setup(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
-        if (isModelGameObject(component.gameObject)) {
+        if (GameObjectUtils.isModelGameObject(component.gameObject)) {
             setupModelComponentWidget(rootWidget)
         }
     }
@@ -21,9 +19,5 @@ object ComponentWidgetCreator {
         rootWidget.addSelectBox(types) {
             // NOOP
         }
-    }
-
-    private fun isModelGameObject(gameObject: GameObject): Boolean {
-        return gameObject.findComponentByType<ModelComponent>(Component.Type.MODEL) != null
     }
 }
