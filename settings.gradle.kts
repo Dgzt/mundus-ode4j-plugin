@@ -12,3 +12,4 @@ plugins {
 
 rootProject.name = "mundus-ode4j-plugin"
 include("plugin")
+include("runtime")

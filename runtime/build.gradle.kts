@@ -9,8 +9,6 @@ plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version "1.9.0"
 
-    kotlin("kapt") version "1.9.0"
-
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
 }
@@ -24,15 +22,15 @@ repositories {
 }
 
 dependencies {
-    api("org.pf4j:pf4j:3.10.0")
     api("com.badlogicgames.gdx:gdx:1.12.0")
-    kapt("org.pf4j:pf4j:3.11.0")
 
-    implementation("com.github.Dgzt.Mundus:commons:plugin-new-component-SNAPSHOT")
-    implementation("com.github.Dgzt.Mundus:plugin-api:plugin-new-component-SNAPSHOT")
-    implementation("com.github.Dgzt.Mundus:editor-commons:plugin-new-component-SNAPSHOT")
+//    implementation("com.github.Dgzt.Mundus:commons:plugin-new-component-SNAPSHOT")
+//    implementation("com.github.Dgzt.Mundus:plugin-api:plugin-new-component-SNAPSHOT")
+//    implementation("com.github.Dgzt.Mundus:editor-commons:plugin-new-component-SNAPSHOT")
 
-    api(project(":runtime"))
+    api("com.github.antzGames:gdx-ode4j:master-SNAPSHOT")
+
+    api("com.github.Dgzt.Mundus:commons:plugin-new-component-SNAPSHOT")
 
 //    implementation("com.github.jamestkhan.mundus:commons:master-SNAPSHOT")
 //    implementation("com.github.jamestkhan.mundus:plugin-api:master-SNAPSHOT")
@@ -46,28 +44,6 @@ java {
     }
 }
 
-tasks.withType<Jar> {
-    dependsOn(":runtime:jar")
-
-    archiveFileName.set("ode4j-plugin.jar")
-
-    // Otherwise you'll get a "No main manifest attribute" error
-    manifest {
-        attributes["Plugin-Class"]= "com.github.dgzt.mundus.plugin.ode4j.MundusOde4jPlugin"
-        attributes["Plugin-Id"] = "ode4j-plugin"
-        attributes["Plugin-Provider"] = "Tibor Zsuro (Dgzt)"
-        attributes["Plugin-Version"] = "0.0.1-SNAPSHOT"
-    }
-
-    // Include runtime in jar file
-    val dependencies = configurations
-        .runtimeClasspath
-        .get()
-        .filter { it.name.equals("runtime.jar") }
-        .map(::zipTree)
-    from(dependencies)
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
 
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
