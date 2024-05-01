@@ -63,7 +63,10 @@ tasks.withType<Jar> {
     val dependencies = configurations
         .runtimeClasspath
         .get()
-        .filter { it.name.equals("runtime.jar") }
+        .filter {
+            it.name.equals("runtime.jar") ||
+            it.name.equals("gdx-ode4j-master-SNAPSHOT.jar")
+        }
         .map(::zipTree)
     from(dependencies)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
