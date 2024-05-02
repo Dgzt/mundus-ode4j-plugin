@@ -8,6 +8,7 @@
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version "1.9.0"
+    id("maven-publish")
 
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
@@ -42,10 +43,24 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(8))
     }
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
 
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "com.github.dgzt.mundus.plugin.ode4j"
+            artifactId = project.name
+            version = "0.0.1"
+            from(components["java"])
+        }
+    }
 }
