@@ -24,6 +24,11 @@ public class MundusOde4jRuntimePlugin {
         instance = new MundusOde4jRuntimePlugin(config);
     }
 
+    public static PhysicsWorld getPhysicsWorld() {
+        checkInstance();
+        return instance.physicsWorld;
+    }
+
     public static void update() {
         checkInstance();
         instance.physicsWorld.update();
