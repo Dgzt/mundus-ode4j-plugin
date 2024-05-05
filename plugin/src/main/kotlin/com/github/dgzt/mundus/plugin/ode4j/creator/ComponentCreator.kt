@@ -15,6 +15,6 @@ object ComponentCreator {
             shapeType = ShapeType.BOX
         }
 
-        return Ode4jPhysicsComponent(gameObject, shapeType)
+        return Ode4jPhysicsComponent(gameObject, shapeType, null) // TODO create and add geom
     }
 }

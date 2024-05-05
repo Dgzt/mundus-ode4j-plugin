@@ -32,6 +32,6 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
     public Component convert(final GameObject gameObject, OrderedMap<String, String> orderedMap) {
         final ShapeType shapeType = ShapeType.valueOf(orderedMap.get(SaveConstants.SHAPE));
 
-        return new Ode4jPhysicsComponent(gameObject, shapeType);
+        return new Ode4jPhysicsComponent(gameObject, shapeType, null); // TODO Fix null value
     }
 }
