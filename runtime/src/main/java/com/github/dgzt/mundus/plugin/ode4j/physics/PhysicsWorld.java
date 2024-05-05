@@ -3,11 +3,18 @@ package com.github.dgzt.mundus.plugin.ode4j.physics;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.github.antzGames.gdx.ode4j.ode.DBody;
+import com.github.antzGames.gdx.ode4j.ode.DBox;
+import com.github.antzGames.gdx.ode4j.ode.DCylinder;
+import com.github.antzGames.gdx.ode4j.ode.DHeightfieldData;
 import com.github.antzGames.gdx.ode4j.ode.DJointGroup;
+import com.github.antzGames.gdx.ode4j.ode.DPlane;
 import com.github.antzGames.gdx.ode4j.ode.DSapSpace;
 import com.github.antzGames.gdx.ode4j.ode.DSpace;
+import com.github.antzGames.gdx.ode4j.ode.DTriMesh;
+import com.github.antzGames.gdx.ode4j.ode.DTriMeshData;
 import com.github.antzGames.gdx.ode4j.ode.DWorld;
 import com.github.antzGames.gdx.ode4j.ode.OdeHelper;
+import com.github.antzGames.gdx.ode4j.ode.internal.DxTrimeshHeightfield;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
 import com.github.dgzt.mundus.plugin.ode4j.config.RuntimeConfig;
 
@@ -44,6 +51,26 @@ public class PhysicsWorld implements Disposable {
         updateCallback = config.getUpdateCallback();
 
         physicsComponents = new Array<>();
+    }
+
+    public DPlane createPlane() {
+        return OdeHelper.createPlane(space, 0.0, 1.0, 0.0, 0.0);
+    }
+
+    public DxTrimeshHeightfield createTrimeshHeightfield(final DHeightfieldData data) {
+        return new DxTrimeshHeightfield(space, data, true);
+    }
+
+    public DTriMesh createTriMesh(final DTriMeshData data) {
+        return OdeHelper.createTriMesh(space, data, null, null, null);
+    }
+
+    public DBox createBox(final float width, final float height, final float depth) {
+        return OdeHelper.createBox(space, width, height, depth);
+    }
+
+    public DCylinder createCylinder(final float radius, final float height) {
+        return OdeHelper.createCylinder(space, radius, height);
     }
 
     public DBody createBody() {
