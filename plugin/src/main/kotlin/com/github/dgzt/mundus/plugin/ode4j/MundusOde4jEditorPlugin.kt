@@ -16,6 +16,10 @@ import org.pf4j.Plugin
 
 class MundusOde4jEditorPlugin : Plugin() {
 
+    init {
+        MundusOde4jRuntimePlugin.init()
+    }
+
     @Extension
     class Ode4jMenuExtension : MenuExtension {
 
@@ -50,7 +54,7 @@ class MundusOde4jEditorPlugin : Plugin() {
     @Extension
     class Ode4jDisposeExtension : DisposeExtension {
         override fun dispose() {
-            // TODO dispose ode4j
+            MundusOde4jRuntimePlugin.dispose()
         }
     }
 
