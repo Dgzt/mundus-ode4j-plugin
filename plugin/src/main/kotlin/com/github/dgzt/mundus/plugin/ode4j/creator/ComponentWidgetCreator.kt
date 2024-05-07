@@ -6,8 +6,12 @@ import com.github.dgzt.mundus.plugin.ode4j.util.GameObjectUtils
 import com.mbrlabs.mundus.commons.scene3d.components.Component
 import com.mbrlabs.mundus.commons.scene3d.components.ModelComponent
 import com.mbrlabs.mundus.pluginapi.ui.RootWidget
+import com.mbrlabs.mundus.pluginapi.ui.RootWidgetCell
 
 object ComponentWidgetCreator {
+
+    private const val BOX = "Box"
+    private const val CYLINDER = "Cylinder"
 
     fun setup(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
         if (GameObjectUtils.isModelGameObject(component.gameObject)) {
@@ -17,14 +21,29 @@ object ComponentWidgetCreator {
     }
 
     private fun setupModelComponentWidget(modelComponent: ModelComponent, rootWidget: RootWidget) {
-        val boundingBox = modelComponent.orientedBoundingBox.bounds
+        var innerWidgetCell: RootWidgetCell? = null
 
         val types = Array<String>()
-        types.add("Box")
+        types.add(BOX)
+        types.add(CYLINDER)
         rootWidget.addSelectBox(types) {
-            // NOOP
+            innerWidgetCell!!.rootWidget!!.clearWidgets()
+
+            if (it.equals(BOX)) {
+                addBoxWidgets(modelComponent, innerWidgetCell!!.rootWidget)
+            }
         }
         rootWidget.addRow()
+
+        innerWidgetCell = rootWidget.addEmptyWidget()
+
+        // Add default box widgets
+        addBoxWidgets(modelComponent, innerWidgetCell.rootWidget)
+    }
+
+    private fun addBoxWidgets(modelComponent: ModelComponent, rootWidget: RootWidget) {
+        val boundingBox = modelComponent.orientedBoundingBox.bounds
+
         rootWidget.addLabel("Size:")
         rootWidget.addRow()
         rootWidget.addSpinner("Width", 0.1f, Float.MAX_VALUE, boundingBox.width, 0.1f) {
