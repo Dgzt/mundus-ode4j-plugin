@@ -12,6 +12,8 @@ public class Ode4jPhysicsComponent extends AbstractComponent {
     private final ShapeType shapeType;
     private final DGeom geom;
     private DBody body;
+    /* User-defined data */
+    private Object data;
 
     public Ode4jPhysicsComponent(
             final GameObject go,
@@ -52,5 +54,19 @@ public class Ode4jPhysicsComponent extends AbstractComponent {
 
     public void setBody(final DBody body) {
         this.body = body;
+    }
+
+    /**
+     * @return User-defined data.
+     */
+    public Object getData() {
+        return data;
+    }
+
+    /**
+     * Set user-defined data.
+     */
+    public void setData(final Object data) {
+        this.data = data;
     }
 }
