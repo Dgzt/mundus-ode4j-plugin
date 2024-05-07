@@ -94,4 +94,8 @@ public class PhysicsWorld implements Disposable {
         world.destroy();
         OdeHelper.closeODE();
     }
+
+    public Array<Ode4jPhysicsComponent> getPhysicsComponents() {
+        return physicsComponents;
+    }
 }

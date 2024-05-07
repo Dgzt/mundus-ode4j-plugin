@@ -1,5 +1,6 @@
 package com.github.dgzt.mundus.plugin.ode4j.component;
 
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.github.antzGames.gdx.ode4j.ode.DBody;
 import com.github.antzGames.gdx.ode4j.ode.DGeom;
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType;
@@ -12,6 +13,7 @@ public class Ode4jPhysicsComponent extends AbstractComponent {
     private final ShapeType shapeType;
     private final DGeom geom;
     private DBody body;
+    private ModelInstance debugInstance;
     /* User-defined data */
     private Object data;
 
@@ -54,6 +56,14 @@ public class Ode4jPhysicsComponent extends AbstractComponent {
 
     public void setBody(final DBody body) {
         this.body = body;
+    }
+
+    public ModelInstance getDebugInstance() {
+        return debugInstance;
+    }
+
+    public void setDebugInstance(final ModelInstance debugInstance) {
+        this.debugInstance = debugInstance;
     }
 
     /**
