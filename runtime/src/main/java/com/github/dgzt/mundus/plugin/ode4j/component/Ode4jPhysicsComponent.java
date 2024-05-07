@@ -64,7 +64,8 @@ public class Ode4jPhysicsComponent extends AbstractComponent {
     }
 
     /**
-     * Set user-defined data.
+     * Set the user-defined data.
+     * @param data The data.
      */
     public void setData(final Object data) {
         this.data = data;
