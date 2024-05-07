@@ -32,7 +32,7 @@ class MundusOde4jEditorPlugin : Plugin() {
         override fun getMenuName(): String = "Ode4j Physics"
 
         override fun setupDialogRootWidget(root: RootWidget) {
-            root.addCheckbox("Debug render") {
+            root.addCheckbox("Debug render", PropertyManager.debugRender) {
                 PropertyManager.debugRender = it
             }.setPad(PAD, PAD, PAD, PAD)
         }
