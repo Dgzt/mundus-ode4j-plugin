@@ -13,4 +13,8 @@ object GameObjectUtils {
     fun isModelGameObject(gameObject: GameObject): Boolean {
         return gameObject.findComponentByType<ModelComponent>(Component.Type.MODEL) != null
     }
+
+    fun getModelComponent(gameObject: GameObject): ModelComponent {
+        return gameObject.findComponentByType(Component.Type.MODEL)
+    }
 }
