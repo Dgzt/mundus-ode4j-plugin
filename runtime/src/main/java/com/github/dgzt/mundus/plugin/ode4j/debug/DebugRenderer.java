@@ -37,9 +37,8 @@ public class DebugRenderer {
             if (debugInstance == null) {
                 if (ShapeType.BOX == physicsComponent.getShapeType()) {
                     final DBox boxGeom = (DBox) physicsComponent.getGeom();
-                    DVector3C lengths = boxGeom.getLengths();
+                    final DVector3C lengths = boxGeom.getLengths();
                     debugInstance = DebugModelBuilder.createBox((float) lengths.get0(), (float) lengths.get1(), (float) lengths.get2());
-                    debugInstance.transform.setToScaling(physicsComponent.gameObject.getScale(TMP_VECTOR3));
                     debugInstance.transform.setTranslation(physicsComponent.gameObject.getPosition(TMP_VECTOR3));
                 }
                 physicsComponent.setDebugInstance(debugInstance);
