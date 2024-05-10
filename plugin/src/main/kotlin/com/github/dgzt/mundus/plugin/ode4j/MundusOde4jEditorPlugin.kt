@@ -5,13 +5,16 @@ import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent
 import com.github.dgzt.mundus.plugin.ode4j.converter.Ode4jPhysicsComponentConverter
 import com.github.dgzt.mundus.plugin.ode4j.creator.ComponentCreator
 import com.github.dgzt.mundus.plugin.ode4j.creator.ComponentWidgetCreator
+import com.github.dgzt.mundus.plugin.ode4j.event.GameObjectModifiedEventListener
 import com.mbrlabs.mundus.commons.mapper.CustomComponentConverter
 import com.mbrlabs.mundus.commons.scene3d.GameObject
 import com.mbrlabs.mundus.commons.scene3d.components.Component
 import com.mbrlabs.mundus.pluginapi.ComponentExtension
 import com.mbrlabs.mundus.pluginapi.CustomShaderRenderExtension
 import com.mbrlabs.mundus.pluginapi.DisposeExtension
+import com.mbrlabs.mundus.pluginapi.EventExtension
 import com.mbrlabs.mundus.pluginapi.MenuExtension
+import com.mbrlabs.mundus.pluginapi.PluginEventManager
 import com.mbrlabs.mundus.pluginapi.ui.RootWidget
 import org.pf4j.Extension
 import org.pf4j.Plugin
@@ -58,6 +61,13 @@ class MundusOde4jEditorPlugin : Plugin() {
         override fun render(cam: Camera) {
             PropertyManager.debugRenderer.isEnabled = PropertyManager.debugRender
             PropertyManager.debugRenderer.render(cam)
+        }
+    }
+
+    @Extension
+    class Ode4jEventExtension : EventExtension {
+        override fun manageEvents(pluginManager: PluginEventManager) {
+            pluginManager.registerEventListener(GameObjectModifiedEventListener())
         }
     }
 
