@@ -5,11 +5,16 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.github.antzGames.gdx.ode4j.Ode2GdxMathUtils;
 import com.github.antzGames.gdx.ode4j.math.DVector3C;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
+import com.github.antzGames.gdx.ode4j.ode.DGeom;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType;
+import com.mbrlabs.mundus.commons.scene3d.components.Component;
+import com.mbrlabs.mundus.commons.scene3d.components.TerrainComponent;
+import com.mbrlabs.mundus.commons.terrain.Terrain;
 
 public class DebugRenderer {
 
@@ -35,7 +40,19 @@ public class DebugRenderer {
 
             ModelInstance debugInstance = physicsComponent.getDebugInstance();
             if (debugInstance == null) {
-                if (ShapeType.BOX == physicsComponent.getShapeType()) {
+                if (ShapeType.TERRAIN == physicsComponent.getShapeType()) {
+                    final TerrainComponent terrainComponent = physicsComponent.gameObject.findComponentByType(Component.Type.TERRAIN);
+                    final Terrain terrain = terrainComponent.getTerrainAsset().getTerrain();
+                    final DGeom geom = physicsComponent.getGeom();
+                    final DVector3C geomPosition = geom.getPosition();
+                    final int terrainWidth = terrain.terrainWidth;
+                    final int terrainDepth = terrain.terrainDepth;
+                    final int vertexResolution = terrain.vertexResolution;
+
+                    debugInstance = DebugModelBuilder.createTerrain(terrainComponent, terrainWidth, terrainDepth, vertexResolution);
+                    debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(geom.getQuaternion()));
+                    debugInstance.transform.setTranslation((float) geomPosition.get0(), (float) geomPosition.get1(), (float) geomPosition.get2());
+                } else if (ShapeType.BOX == physicsComponent.getShapeType()) {
                     final DBox boxGeom = (DBox) physicsComponent.getGeom();
                     final DVector3C lengths = boxGeom.getLengths();
                     debugInstance = DebugModelBuilder.createBox((float) lengths.get0(), (float) lengths.get1(), (float) lengths.get2());
