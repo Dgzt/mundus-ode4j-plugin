@@ -65,7 +65,7 @@ public class PhysicsWorld implements Disposable {
         return OdeHelper.createTriMesh(space, data, null, null, null);
     }
 
-    public DBox createBox(final float width, final float height, final float depth) {
+    public DBox createBox(final double width, final double height, final double depth) {
         return OdeHelper.createBox(space, width, height, depth);
     }
 
