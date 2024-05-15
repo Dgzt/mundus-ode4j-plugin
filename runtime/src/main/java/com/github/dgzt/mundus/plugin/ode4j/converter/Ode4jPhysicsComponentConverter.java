@@ -32,6 +32,7 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
         if (ShapeType.BOX == ode4jComponent.getShapeType()) {
             final DBox boxGeom = (DBox) ode4jComponent.getGeom();
             final DVector3C boxLength = boxGeom.getLengths();
+            map.put(SaveConstants.BOX_STATIC, String.valueOf(true));
             map.put(SaveConstants.BOX_WIDTH, String.valueOf(boxLength.get0()));
             map.put(SaveConstants.BOX_HEIGHT, String.valueOf(boxLength.get1()));
             map.put(SaveConstants.BOX_DEPTH, String.valueOf(boxLength.get2()));
@@ -50,10 +51,11 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
                 physicsComponent = Ode4jPhysicsComponentUtils.createTerrainPhysicsComponent(gameObject);
                 break;
             case BOX: {
+                final boolean geomStatic = Boolean.parseBoolean(orderedMap.get(SaveConstants.BOX_STATIC));
                 final double geomWidth = Double.parseDouble(orderedMap.get(SaveConstants.BOX_WIDTH));
                 final double geomHeight = Double.parseDouble(orderedMap.get(SaveConstants.BOX_HEIGHT));
                 final double geomDepth = Double.parseDouble(orderedMap.get(SaveConstants.BOX_DEPTH));
-                physicsComponent = Ode4jPhysicsComponentUtils.createBoxPhysicsComponent(gameObject, geomWidth, geomHeight, geomDepth);
+                physicsComponent = Ode4jPhysicsComponentUtils.createBoxPhysicsComponent(gameObject, geomStatic, geomWidth, geomHeight, geomDepth);
                 break;
             }
             default: throw new RuntimeException("Not supported shape type");
