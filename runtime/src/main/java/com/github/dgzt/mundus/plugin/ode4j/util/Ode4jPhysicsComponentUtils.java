@@ -96,7 +96,12 @@ public class Ode4jPhysicsComponentUtils {
             geom.setBody(body);
         }
 
-        return new Ode4jPhysicsComponent(gameObject, ShapeType.BOX, geom);
+        final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.BOX, geom);
+        if (!isStatic) {
+            physicsComponent.setBody(body);
+        }
+
+        return physicsComponent;
     }
 
     public static double heightfieldCallback(
