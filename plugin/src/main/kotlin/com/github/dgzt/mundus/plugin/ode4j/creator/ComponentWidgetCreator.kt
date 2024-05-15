@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
 import com.github.antzGames.gdx.ode4j.math.DVector3
 import com.github.antzGames.gdx.ode4j.ode.DBox
+import com.github.antzGames.gdx.ode4j.ode.OdeHelper
+import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent
 import com.github.dgzt.mundus.plugin.ode4j.debug.DebugModelBuilder
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType
@@ -13,7 +15,6 @@ import com.mbrlabs.mundus.pluginapi.ui.RootWidgetCell
 
 object ComponentWidgetCreator {
 
-    private val TMP_DVECTOR3 = DVector3()
     private val TMP_VECTOR3 = Vector3()
 
     private const val BOX = "Box"
@@ -53,24 +54,54 @@ object ComponentWidgetCreator {
     }
 
     private fun addBoxWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
-        val boxGeom = component.geom as DBox
-        boxGeom.getLengths(TMP_DVECTOR3)
+        var boxGeom = component.geom as DBox
+        val length = DVector3()
+        boxGeom.getLengths(length)
 
+        var static = component.geom.body == null
+
+        rootWidget.addCheckbox("Static", static) {
+            boxGeom.getLengths(length)
+            component.body?.destroy()
+            component.body = null
+            component.geom.destroy()
+            component.geom = null
+
+            boxGeom = MundusOde4jRuntimePlugin.getPhysicsWorld().createBox(length.get0(), length.get1(), length.get2())
+            component.geom = boxGeom
+
+            val goPosition = component.gameObject.getPosition(Vector3())
+            static = it
+            if (static) {
+                component.geom.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
+            } else {
+                val body = MundusOde4jRuntimePlugin.getPhysicsWorld().createBody()
+                body.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
+
+                // TODO set mass info from UI
+                val massInfo = OdeHelper.createMass()
+                massInfo.setBox(1.0, length)
+                massInfo.adjust(10.0)
+                body.mass = massInfo
+                body.setAutoDisableDefaults()
+            }
+        }
+        rootWidget.addRow()
         rootWidget.addLabel("Size:")
         rootWidget.addRow()
-        rootWidget.addSpinner("Width", 0.1f, Float.MAX_VALUE, TMP_DVECTOR3.get0().toFloat(), 0.1f) {
-            val currentLength = boxGeom.lengths
-            boxGeom.setLengths(it.toDouble(), currentLength.get1(), currentLength.get2())
+        rootWidget.addSpinner("Width", 0.1f, Float.MAX_VALUE, length.get0().toFloat(), 0.1f) {
+            length.set0(it.toDouble())
+            boxGeom.lengths = length
             updateDebugInstanceIfNecessary(component, boxGeom)
         }
-        rootWidget.addSpinner("Height", 0.1f, Float.MAX_VALUE, TMP_DVECTOR3.get1().toFloat(), 0.1f) {
-            val currentLength = boxGeom.lengths
-            boxGeom.setLengths(currentLength.get0(), it.toDouble(), currentLength.get2())
+        rootWidget.addSpinner("Height", 0.1f, Float.MAX_VALUE, length.get1().toFloat(), 0.1f) {
+            length.set1(it.toDouble())
+            boxGeom.lengths = length
             updateDebugInstanceIfNecessary(component, boxGeom)
         }
-        rootWidget.addSpinner("Depth", 0.1f, Float.MAX_VALUE, TMP_DVECTOR3.get2().toFloat(), 0.1f) {
-            val currentLength = boxGeom.lengths
-            boxGeom.setLengths(currentLength.get0(), currentLength.get1(), it.toDouble())
+        rootWidget.addSpinner("Depth", 0.1f, Float.MAX_VALUE, length.get2().toFloat(), 0.1f) {
+            length.set2(it.toDouble())
+            boxGeom.lengths = length
             updateDebugInstanceIfNecessary(component, boxGeom)
         }
     }

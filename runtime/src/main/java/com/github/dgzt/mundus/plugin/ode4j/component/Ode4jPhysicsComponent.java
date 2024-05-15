@@ -11,10 +11,12 @@ import com.mbrlabs.mundus.commons.scene3d.components.Component;
 public class Ode4jPhysicsComponent extends AbstractComponent {
 
     private final ShapeType shapeType;
-    private final DGeom geom;
+    private DGeom geom;
+    // The body can be null if it is a static game object
     private DBody body;
+    // The debugInstance can be null. The DebugRenderer will create if necessary
     private ModelInstance debugInstance;
-    /* User-defined data */
+    // User-defined data. It can be null
     private Object data;
 
     public Ode4jPhysicsComponent(
@@ -48,6 +50,10 @@ public class Ode4jPhysicsComponent extends AbstractComponent {
 
     public DGeom getGeom() {
         return geom;
+    }
+
+    public void setGeom(final DGeom geom) {
+        this.geom = geom;
     }
 
     public DBody getBody() {
