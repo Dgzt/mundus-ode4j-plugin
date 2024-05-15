@@ -84,6 +84,9 @@ object ComponentWidgetCreator {
                 massInfo.adjust(10.0)
                 body.mass = massInfo
                 body.setAutoDisableDefaults()
+
+                boxGeom.body = body
+                component.body = body
             }
         }
         rootWidget.addRow()

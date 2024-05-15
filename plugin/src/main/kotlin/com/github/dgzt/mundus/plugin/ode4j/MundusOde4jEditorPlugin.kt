@@ -35,11 +35,14 @@ class MundusOde4jEditorPlugin : Plugin() {
         override fun getMenuName(): String = "Ode4j Physics"
 
         override fun setupDialogRootWidget(root: RootWidget) {
+            root.addCheckbox("Enable physics", PropertyManager.enablePhysics) {
+                PropertyManager.enablePhysics = it
+            }.setPad(PAD, PAD, 0f, PAD)
+            root.addRow()
             root.addCheckbox("Debug render", PropertyManager.debugRender) {
                 PropertyManager.debugRender = it
             }.setPad(PAD, PAD, PAD, PAD)
         }
-
     }
 
     @Extension
@@ -59,6 +62,10 @@ class MundusOde4jEditorPlugin : Plugin() {
     @Extension
     class Ode4jCustomRenderExtension : CustomShaderRenderExtension {
         override fun render(cam: Camera) {
+            if (PropertyManager.enablePhysics) {
+                MundusOde4jRuntimePlugin.getPhysicsWorld().update()
+            }
+
             PropertyManager.debugRenderer.isEnabled = PropertyManager.debugRender
             PropertyManager.debugRenderer.render(cam)
         }
