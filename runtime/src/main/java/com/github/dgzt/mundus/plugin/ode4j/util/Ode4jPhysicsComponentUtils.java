@@ -23,6 +23,7 @@ public class Ode4jPhysicsComponentUtils {
 
     private static final Vector3 TMP_SCALE = new Vector3();
     private static final Vector3 TMP_POSITION = new Vector3();
+    private static final Vector3 TMP_VERTEX_POSITION = new Vector3();
 
     public static Ode4jPhysicsComponent createTerrainPhysicsComponent(final GameObject gameObject) {
         final TerrainComponent terrainComponent = gameObject.findComponentByType(Component.Type.TERRAIN);
@@ -41,7 +42,7 @@ public class Ode4jPhysicsComponentUtils {
 
         final DHeightfieldData heightfieldData = OdeHelper.createHeightfieldData();
         heightfieldData.buildCallback(null, heightfieldCallback, terrainWidth, terrainDepth,
-                vertexResolution * 2, vertexResolution * 2,
+                vertexResolution, vertexResolution,
                 1.0, 0.0, 0.0, false);
 
         final DxTrimeshHeightfield heightfield = MundusOde4jRuntimePlugin.getPhysicsWorld().createTrimeshHeightfield(heightfieldData);
@@ -106,14 +107,13 @@ public class Ode4jPhysicsComponentUtils {
 
     public static double heightfieldCallback(
             final TerrainComponent terrainComponent,
-            final int x,
-            final int z
+            final int cellX,
+            final int cellZ
     ) {
-        final Vector3 position = terrainComponent.gameObject.getPosition(TMP_POSITION);
-        final float worldX = position.x + x;
-        final float worldZ = position.z + z;
+        final Terrain terrain = terrainComponent.getTerrainAsset().getTerrain();
+        final Vector3 vertexPosition = terrain.getVertexPosition(TMP_VERTEX_POSITION, cellX, cellZ);
 
         // +0.2 to increase height of the mesh so we can see it if debug instance is visible
-        return terrainComponent.getHeightAtWorldCoord(worldX, worldZ) + 0.2;
+        return vertexPosition.y + 0.2;
     }
 }

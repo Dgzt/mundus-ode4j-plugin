@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
-import com.badlogic.gdx.math.MathUtils;
 import com.github.dgzt.mundus.plugin.ode4j.util.Ode4jPhysicsComponentUtils;
 import com.mbrlabs.mundus.commons.scene3d.components.TerrainComponent;
 
@@ -51,19 +50,19 @@ public class DebugModelBuilder {
                 final float[] d = new float[3];
 
                 a[0] = ox + (i) * wsamp;
-                a[1] = (float) Ode4jPhysicsComponentUtils.heightfieldCallback(terrainComponent, MathUtils.floor((i) * wsamp), MathUtils.floor((j) * dsamp));
+                a[1] = (float) Ode4jPhysicsComponentUtils.heightfieldCallback(terrainComponent, (i), (j));
                 a[2] = oz + (j) * dsamp;
 
                 b[0] = ox + (i + 1) * wsamp;
-                b[1] = (float) Ode4jPhysicsComponentUtils.heightfieldCallback(terrainComponent, MathUtils.floor((i + 1) * wsamp), MathUtils.floor((j) * dsamp));
+                b[1] = (float) Ode4jPhysicsComponentUtils.heightfieldCallback(terrainComponent, (i + 1), (j));
                 b[2] = oz + (j) * dsamp;
 
                 c[0] = ox + (i) * wsamp;
-                c[1] = (float) Ode4jPhysicsComponentUtils.heightfieldCallback(terrainComponent, MathUtils.floor((i) * wsamp), MathUtils.floor((j + 1) * dsamp));
+                c[1] = (float) Ode4jPhysicsComponentUtils.heightfieldCallback(terrainComponent, (i), (j + 1));
                 c[2] = oz + (j + 1) * dsamp;
 
                 d[0] = ox + (i + 1) * wsamp;
-                d[1] = (float) Ode4jPhysicsComponentUtils.heightfieldCallback(terrainComponent, MathUtils.floor((i + 1) * wsamp), MathUtils.floor((j + 1) * dsamp));
+                d[1] = (float) Ode4jPhysicsComponentUtils.heightfieldCallback(terrainComponent, (i + 1), (j + 1));
                 d[2] = oz + (j + 1) * dsamp;
 
                 meshPartBuilder.line(a[0], a[1], a[2], b[0], b[1], b[2]);
