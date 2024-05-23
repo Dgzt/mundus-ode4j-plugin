@@ -9,4 +9,8 @@ public class SaveConstants {
     public static final String BOX_WIDTH = "box-width";
     public static final String BOX_HEIGHT = "box-height";
     public static final String BOX_DEPTH = "box-depth";
+
+    // Cylinder shape
+    public static final String CYLINDER_RADIUS = "cylinder-radius";
+    public static final String CYLINDER_HEIGHT = "cylinder-height";
 }

@@ -69,7 +69,7 @@ public class PhysicsWorld implements Disposable {
         return OdeHelper.createBox(space, width, height, depth);
     }
 
-    public DCylinder createCylinder(final float radius, final float height) {
+    public DCylinder createCylinder(final double radius, final double height) {
         return OdeHelper.createCylinder(space, radius, height);
     }
 

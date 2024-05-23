@@ -3,6 +3,7 @@ package com.github.dgzt.mundus.plugin.ode4j.converter;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.github.antzGames.gdx.ode4j.math.DVector3C;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
+import com.github.antzGames.gdx.ode4j.ode.DCylinder;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
 import com.github.dgzt.mundus.plugin.ode4j.constant.SaveConstants;
@@ -36,6 +37,12 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
             map.put(SaveConstants.BOX_WIDTH, String.valueOf(boxLength.get0()));
             map.put(SaveConstants.BOX_HEIGHT, String.valueOf(boxLength.get1()));
             map.put(SaveConstants.BOX_DEPTH, String.valueOf(boxLength.get2()));
+        } else if (ShapeType.CYLINDER == ode4jComponent.getShapeType()) {
+            final DCylinder cylinderGeom = (DCylinder) ode4jComponent.getGeom();
+            final double radius = cylinderGeom.getRadius();
+            final double height = cylinderGeom.getLength();
+            map.put(SaveConstants.CYLINDER_RADIUS, String.valueOf(radius));
+            map.put(SaveConstants.CYLINDER_HEIGHT, String.valueOf(height));
         }
 
         return map;
@@ -50,14 +57,18 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
             case TERRAIN:
                 physicsComponent = Ode4jPhysicsComponentUtils.createTerrainPhysicsComponent(gameObject);
                 break;
-            case BOX: {
-                final boolean geomStatic = Boolean.parseBoolean(orderedMap.get(SaveConstants.BOX_STATIC));
-                final double geomWidth = Double.parseDouble(orderedMap.get(SaveConstants.BOX_WIDTH));
-                final double geomHeight = Double.parseDouble(orderedMap.get(SaveConstants.BOX_HEIGHT));
-                final double geomDepth = Double.parseDouble(orderedMap.get(SaveConstants.BOX_DEPTH));
-                physicsComponent = Ode4jPhysicsComponentUtils.createBoxPhysicsComponent(gameObject, geomStatic, geomWidth, geomHeight, geomDepth);
+            case BOX:
+                final boolean boxStatic = Boolean.parseBoolean(orderedMap.get(SaveConstants.BOX_STATIC));
+                final double boxWidth = Double.parseDouble(orderedMap.get(SaveConstants.BOX_WIDTH));
+                final double boxHeight = Double.parseDouble(orderedMap.get(SaveConstants.BOX_HEIGHT));
+                final double boxDepth = Double.parseDouble(orderedMap.get(SaveConstants.BOX_DEPTH));
+                physicsComponent = Ode4jPhysicsComponentUtils.createBoxPhysicsComponent(gameObject, boxStatic, boxWidth, boxHeight, boxDepth);
                 break;
-            }
+            case CYLINDER:
+                final double cylinderRadius = Double.parseDouble(orderedMap.get(SaveConstants.CYLINDER_RADIUS));
+                final double cylinderHeight = Double.parseDouble(orderedMap.get(SaveConstants.CYLINDER_HEIGHT));
+                physicsComponent = Ode4jPhysicsComponentUtils.createCylinderPhysicsComponent(gameObject, cylinderRadius, cylinderHeight);
+                break;
             default: throw new RuntimeException("Not supported shape type");
         }
 

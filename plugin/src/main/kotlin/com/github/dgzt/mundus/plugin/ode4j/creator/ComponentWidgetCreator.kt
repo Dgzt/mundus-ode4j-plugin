@@ -67,9 +67,9 @@ object ComponentWidgetCreator {
                 val goScale = modelComponent.gameObject.getScale(Vector3())
                 val goPosition = modelComponent.gameObject.getPosition(Vector3())
                 val boundingBox = modelComponent.orientedBoundingBox.bounds
-                val radius = Math.max(boundingBox.width * goScale.x, boundingBox.depth * goScale.z) / 2.0f
+                val radius = Math.max(boundingBox.width * goScale.x, boundingBox.depth * goScale.z) / 2.0
                 val height = boundingBox.height * goScale.y
-                component.geom = physicsWorld.createCylinder(radius, height)
+                component.geom = physicsWorld.createCylinder(radius, height.toDouble())
                 component.geom.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
 //                component.geom.setOffsetQuaternion(DQuaternion.fromEulerDegrees(90.0, 0.0, 0.0))
 

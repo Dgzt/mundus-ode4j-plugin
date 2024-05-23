@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.github.antzGames.gdx.ode4j.ode.DBody;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
+import com.github.antzGames.gdx.ode4j.ode.DCylinder;
 import com.github.antzGames.gdx.ode4j.ode.DHeightfield;
 import com.github.antzGames.gdx.ode4j.ode.DHeightfieldData;
 import com.github.antzGames.gdx.ode4j.ode.DMass;
@@ -103,6 +104,20 @@ public class Ode4jPhysicsComponentUtils {
         }
 
         return physicsComponent;
+    }
+
+    public static Ode4jPhysicsComponent createCylinderPhysicsComponent(
+            final GameObject gameObject,
+            final double geomRadius,
+            final double geomHeight
+    ) {
+        final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
+        final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
+
+        final DCylinder geom = physicsWorld.createCylinder(geomRadius, geomHeight);
+        geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
+
+        return new Ode4jPhysicsComponent(gameObject, ShapeType.CYLINDER, geom);
     }
 
     public static double heightfieldCallback(
