@@ -10,6 +10,7 @@ import com.github.antzGames.gdx.ode4j.math.DVector3C;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
 import com.github.antzGames.gdx.ode4j.ode.DGeom;
+import com.github.antzGames.gdx.ode4j.ode.DSphere;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType;
@@ -58,9 +59,13 @@ public class DebugRenderer {
                     final DVector3C lengths = boxGeom.getLengths();
                     debugInstance = DebugModelBuilder.createBox((float) lengths.get0(), (float) lengths.get1(), (float) lengths.get2());
                     debugInstance.transform.setTranslation(physicsComponent.gameObject.getPosition(TMP_VECTOR3));
+                } else if (ShapeType.SPHERE == physicsComponent.getShapeType()) {
+                    final DSphere sphereGeom = (DSphere) physicsComponent.getGeom();
+                    debugInstance = DebugModelBuilder.createSphere((float) sphereGeom.getRadius());
+                    debugInstance.transform.setTranslation(physicsComponent.gameObject.getPosition(TMP_VECTOR3));
                 } else if (ShapeType.CYLINDER == physicsComponent.getShapeType()) {
                     final DCylinder cylinderGeom = (DCylinder) physicsComponent.getGeom();
-                    debugInstance = DebugModelBuilder.createCylinder((float)cylinderGeom.getRadius(), (float)cylinderGeom.getLength());
+                    debugInstance = DebugModelBuilder.createCylinder((float) cylinderGeom.getRadius(), (float) cylinderGeom.getLength());
                     debugInstance.transform.setTranslation(physicsComponent.gameObject.getPosition(TMP_VECTOR3));
                 }
                 physicsComponent.setDebugInstance(debugInstance);

@@ -8,6 +8,7 @@ import com.github.antzGames.gdx.ode4j.ode.DCylinder;
 import com.github.antzGames.gdx.ode4j.ode.DHeightfield;
 import com.github.antzGames.gdx.ode4j.ode.DHeightfieldData;
 import com.github.antzGames.gdx.ode4j.ode.DMass;
+import com.github.antzGames.gdx.ode4j.ode.DSphere;
 import com.github.antzGames.gdx.ode4j.ode.OdeHelper;
 import com.github.antzGames.gdx.ode4j.ode.internal.DxTrimeshHeightfield;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
@@ -104,6 +105,19 @@ public class Ode4jPhysicsComponentUtils {
         }
 
         return physicsComponent;
+    }
+
+    public static Ode4jPhysicsComponent createSpherePhysicsComponent(
+        final GameObject gameObject,
+        final double geomRadius
+    ) {
+        final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
+        final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
+
+        final DSphere geom = physicsWorld.createSphere(geomRadius);
+        geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
+
+        return new Ode4jPhysicsComponent(gameObject, ShapeType.SPHERE, geom);
     }
 
     public static Ode4jPhysicsComponent createCylinderPhysicsComponent(

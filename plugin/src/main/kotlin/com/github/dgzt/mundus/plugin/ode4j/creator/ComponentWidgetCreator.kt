@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array
 import com.github.antzGames.gdx.ode4j.math.DVector3
 import com.github.antzGames.gdx.ode4j.ode.DBox
 import com.github.antzGames.gdx.ode4j.ode.DCylinder
+import com.github.antzGames.gdx.ode4j.ode.DSphere
 import com.github.antzGames.gdx.ode4j.ode.OdeHelper
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent
@@ -21,7 +22,10 @@ object ComponentWidgetCreator {
     private val TMP_VECTOR3 = Vector3()
 
     private const val BOX = "Box"
+    private const val SPHERE = "Sphere"
+    // TODO capsule
     private const val CYLINDER = "Cylinder"
+    // TODO mesh
 
     fun setup(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
         if (GameObjectUtils.isModelGameObject(component.gameObject)) {
@@ -30,12 +34,12 @@ object ComponentWidgetCreator {
     }
 
     private fun setupModelComponentWidget(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
-        val physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld()
         val modelComponent = component.gameObject.findComponentByType<ModelComponent>(Component.Type.MODEL)
         var innerWidgetCell: RootWidgetCell? = null
 
         val types = Array<String>()
         types.add(BOX)
+        types.add(SPHERE)
         types.add(CYLINDER)
         rootWidget.addSelectBox(types, getSelectBoxType(component)) {
             innerWidgetCell!!.rootWidget!!.clearWidgets()
@@ -45,35 +49,15 @@ object ComponentWidgetCreator {
             destroyDebugInstance(component)
 
             if (it.equals(BOX)) {
-                component.shapeType = ShapeType.BOX
+                changeToBox(component, modelComponent, innerWidgetCell!!)
+            }
 
-                // Create static box geom
-                val goScale = modelComponent.gameObject.getScale(Vector3())
-                val goPosition = modelComponent.gameObject.getPosition(Vector3())
-                val boundingBox = modelComponent.orientedBoundingBox.bounds
-                val geomWidth = boundingBox.width * goScale.x
-                val geomHeight = boundingBox.height * goScale.y
-                val geomDepth = boundingBox.depth * goScale.z
-                component.geom = physicsWorld.createBox(geomWidth.toDouble(), geomHeight.toDouble(), geomDepth.toDouble())
-                component.geom.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
-
-                addBoxWidgets(component, innerWidgetCell!!.rootWidget)
+            if (it.equals(SPHERE)) {
+                changeToSphere(component, modelComponent, innerWidgetCell!!)
             }
 
             if (it.equals(CYLINDER)) {
-                component.shapeType = ShapeType.CYLINDER
-
-                // Create static cylinder geom
-                val goScale = modelComponent.gameObject.getScale(Vector3())
-                val goPosition = modelComponent.gameObject.getPosition(Vector3())
-                val boundingBox = modelComponent.orientedBoundingBox.bounds
-                val radius = Math.max(boundingBox.width * goScale.x, boundingBox.depth * goScale.z) / 2.0
-                val height = boundingBox.height * goScale.y
-                component.geom = physicsWorld.createCylinder(radius, height.toDouble())
-                component.geom.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
-//                component.geom.setOffsetQuaternion(DQuaternion.fromEulerDegrees(90.0, 0.0, 0.0))
-
-                addCylinderWidgets(component, innerWidgetCell!!.rootWidget)
+                changeToCylinder(component, modelComponent, innerWidgetCell!!)
             }
         }
         rootWidget.addRow()
@@ -82,6 +66,8 @@ object ComponentWidgetCreator {
 
         if (ShapeType.BOX == component.shapeType) {
             addBoxWidgets(component, innerWidgetCell.rootWidget)
+        } else if (ShapeType.SPHERE == component.shapeType) {
+            addSphereWidgets(component, innerWidgetCell.rootWidget)
         } else if (ShapeType.CYLINDER == component.shapeType) {
             addCylinderWidgets(component, innerWidgetCell.rootWidget)
         }
@@ -93,6 +79,69 @@ object ComponentWidgetCreator {
             ShapeType.CYLINDER -> return CYLINDER
             else -> throw RuntimeException("Not suppoted shape type!")
         }
+    }
+
+    private fun changeToBox(
+        component: Ode4jPhysicsComponent,
+        modelComponent: ModelComponent,
+        innerWidgetCell: RootWidgetCell
+    ) {
+        val physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld()
+
+        component.shapeType = ShapeType.BOX
+
+        // Create static box geom
+        val goScale = modelComponent.gameObject.getScale(Vector3())
+        val goPosition = modelComponent.gameObject.getPosition(Vector3())
+        val boundingBox = modelComponent.orientedBoundingBox.bounds
+        val geomWidth = boundingBox.width * goScale.x
+        val geomHeight = boundingBox.height * goScale.y
+        val geomDepth = boundingBox.depth * goScale.z
+        component.geom = physicsWorld.createBox(geomWidth.toDouble(), geomHeight.toDouble(), geomDepth.toDouble())
+        component.geom.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
+
+        addBoxWidgets(component, innerWidgetCell.rootWidget)
+    }
+
+    private fun changeToSphere(
+        component: Ode4jPhysicsComponent,
+        modelComponent: ModelComponent,
+        innerWidgetCell: RootWidgetCell
+    ) {
+        val physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld()
+
+        component.shapeType = ShapeType.SPHERE
+
+        // Create static sphere box geom
+        val goScale = modelComponent.gameObject.getScale(Vector3())
+        val goPosition = modelComponent.gameObject.getPosition(Vector3())
+        val boundingBox = modelComponent.orientedBoundingBox.bounds
+        val geomRadius = Math.max(Math.max(boundingBox.width * goScale.x, boundingBox.depth * goScale.z), boundingBox.height * goScale.y) / 2.0
+        component.geom = physicsWorld.createSphere(geomRadius)
+        component.geom.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
+
+        addSphereWidgets(component, innerWidgetCell.rootWidget)
+    }
+
+    private fun changeToCylinder(
+        component: Ode4jPhysicsComponent,
+        modelComponent: ModelComponent,
+        innerWidgetCell: RootWidgetCell
+    ) {
+        val physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld()
+
+        component.shapeType = ShapeType.CYLINDER
+
+        // Create static cylinder geom
+        val goScale = modelComponent.gameObject.getScale(Vector3())
+        val goPosition = modelComponent.gameObject.getPosition(Vector3())
+        val boundingBox = modelComponent.orientedBoundingBox.bounds
+        val radius = Math.max(boundingBox.width * goScale.x, boundingBox.depth * goScale.z) / 2.0
+        val height = boundingBox.height * goScale.y
+        component.geom = physicsWorld.createCylinder(radius, height.toDouble())
+        component.geom.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
+
+        addCylinderWidgets(component, innerWidgetCell.rootWidget)
     }
 
     private fun addBoxWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
@@ -150,6 +199,22 @@ object ComponentWidgetCreator {
         }
     }
 
+    private fun addSphereWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
+        var sphereGeom = component.geom as DSphere
+        var statis = component.geom.body == null
+
+        rootWidget.addCheckbox("Static", statis) {
+            // TODO
+        }
+        rootWidget.addRow()
+        rootWidget.addLabel("Size:")
+        rootWidget.addRow()
+        rootWidget.addSpinner("Radius", 0.1f, Float.MAX_VALUE, sphereGeom.radius.toFloat(), 0.1f) {
+            sphereGeom.radius = it.toDouble()
+            updateDebugInstanceIfNecessary(component, sphereGeom)
+        }
+    }
+
     private fun addCylinderWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
         var cylinderGeom = component.geom as DCylinder
         var static = component.geom.body == null
@@ -203,6 +268,17 @@ object ComponentWidgetCreator {
         component.debugInstance = debugInstance
     }
 
+    private fun updateDebugInstanceIfNecessary(component: Ode4jPhysicsComponent, geom: DSphere) {
+        if (component.debugInstance == null) return
+
+        var debugInstance = component.debugInstance
+        debugInstance.model.dispose()
+
+        val radius = geom.radius
+        debugInstance = DebugModelBuilder.createSphere(radius.toFloat())
+        debugInstance.transform.setTranslation(component.gameObject.getPosition(TMP_VECTOR3))
+        component.debugInstance = debugInstance
+    }
 
     private fun updateDebugInstanceIfNecessary(component: Ode4jPhysicsComponent, geom: DCylinder) {
         if (component.debugInstance == null) return

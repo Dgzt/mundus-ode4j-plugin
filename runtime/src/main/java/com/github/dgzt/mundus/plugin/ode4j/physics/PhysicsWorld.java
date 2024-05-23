@@ -10,6 +10,7 @@ import com.github.antzGames.gdx.ode4j.ode.DJointGroup;
 import com.github.antzGames.gdx.ode4j.ode.DPlane;
 import com.github.antzGames.gdx.ode4j.ode.DSapSpace;
 import com.github.antzGames.gdx.ode4j.ode.DSpace;
+import com.github.antzGames.gdx.ode4j.ode.DSphere;
 import com.github.antzGames.gdx.ode4j.ode.DTriMesh;
 import com.github.antzGames.gdx.ode4j.ode.DTriMeshData;
 import com.github.antzGames.gdx.ode4j.ode.DWorld;
@@ -67,6 +68,10 @@ public class PhysicsWorld implements Disposable {
 
     public DBox createBox(final double width, final double height, final double depth) {
         return OdeHelper.createBox(space, width, height, depth);
+    }
+
+    public DSphere createSphere(final double radius) {
+        return OdeHelper.createSphere(space, radius);
     }
 
     public DCylinder createCylinder(final double radius, final double height) {

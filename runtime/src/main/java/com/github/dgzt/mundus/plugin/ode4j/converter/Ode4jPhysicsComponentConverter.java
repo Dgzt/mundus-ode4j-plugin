@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.OrderedMap;
 import com.github.antzGames.gdx.ode4j.math.DVector3C;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
+import com.github.antzGames.gdx.ode4j.ode.DSphere;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
 import com.github.dgzt.mundus.plugin.ode4j.constant.SaveConstants;
@@ -37,6 +38,10 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
             map.put(SaveConstants.BOX_WIDTH, String.valueOf(boxLength.get0()));
             map.put(SaveConstants.BOX_HEIGHT, String.valueOf(boxLength.get1()));
             map.put(SaveConstants.BOX_DEPTH, String.valueOf(boxLength.get2()));
+        } else if (ShapeType.SPHERE == ode4jComponent.getShapeType()) {
+            final DSphere sphereGeom = (DSphere) ode4jComponent.getGeom();
+            final double radius = sphereGeom.getRadius();
+            map.put(SaveConstants.SPHERE_RADIUS, String.valueOf(radius));
         } else if (ShapeType.CYLINDER == ode4jComponent.getShapeType()) {
             final DCylinder cylinderGeom = (DCylinder) ode4jComponent.getGeom();
             final double radius = cylinderGeom.getRadius();
@@ -63,6 +68,10 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
                 final double boxHeight = Double.parseDouble(orderedMap.get(SaveConstants.BOX_HEIGHT));
                 final double boxDepth = Double.parseDouble(orderedMap.get(SaveConstants.BOX_DEPTH));
                 physicsComponent = Ode4jPhysicsComponentUtils.createBoxPhysicsComponent(gameObject, boxStatic, boxWidth, boxHeight, boxDepth);
+                break;
+            case SPHERE:
+                final double sphereRadius = Double.parseDouble(orderedMap.get(SaveConstants.SPHERE_RADIUS));
+                physicsComponent = Ode4jPhysicsComponentUtils.createSpherePhysicsComponent(gameObject, sphereRadius);
                 break;
             case CYLINDER:
                 final double cylinderRadius = Double.parseDouble(orderedMap.get(SaveConstants.CYLINDER_RADIUS));

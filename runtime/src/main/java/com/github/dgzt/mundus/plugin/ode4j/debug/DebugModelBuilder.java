@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.CylinderShapeBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.SphereShapeBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.github.dgzt.mundus.plugin.ode4j.util.Ode4jPhysicsComponentUtils;
 import com.mbrlabs.mundus.commons.scene3d.components.TerrainComponent;
@@ -93,6 +94,22 @@ public class DebugModelBuilder {
                 VertexAttributes.Usage.Position,
                 new Material(ColorAttribute.createDiffuse(Color.WHITE)));
         BoxShapeBuilder.build(meshPartBuilder, width, height, depth);
+        final Model model = modelBuilder.end();
+        return new ModelInstance(model);
+    }
+
+    public static ModelInstance createSphere(
+            final float radius
+    ) {
+        final ModelBuilder modelBuilder = new ModelBuilder();
+        modelBuilder.begin();
+        final MeshPartBuilder meshPartBuilder = modelBuilder.part(
+                "part",
+                GL30.GL_LINES,
+                VertexAttributes.Usage.Position,
+                new Material(ColorAttribute.createDiffuse(Color.WHITE)));
+        final float diameter = radius * 2;
+        SphereShapeBuilder.build(meshPartBuilder, diameter, diameter, diameter, 8, 8);
         final Model model = modelBuilder.end();
         return new ModelInstance(model);
     }
