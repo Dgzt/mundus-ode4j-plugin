@@ -10,7 +10,7 @@ import com.mbrlabs.mundus.commons.scene3d.components.Component;
 
 public class Ode4jPhysicsComponent extends AbstractComponent {
 
-    private final ShapeType shapeType;
+    private ShapeType shapeType;
     private DGeom geom;
     // The body can be null if it is a static game object
     private DBody body;
@@ -46,6 +46,10 @@ public class Ode4jPhysicsComponent extends AbstractComponent {
 
     public ShapeType getShapeType() {
         return shapeType;
+    }
+
+    public void setShapeType(final ShapeType shapeType) {
+        this.shapeType = shapeType;
     }
 
     public DGeom getGeom() {

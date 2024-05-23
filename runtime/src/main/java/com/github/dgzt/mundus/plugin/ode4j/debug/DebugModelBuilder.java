@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.CylinderShapeBuilder;
 import com.github.dgzt.mundus.plugin.ode4j.util.Ode4jPhysicsComponentUtils;
 import com.mbrlabs.mundus.commons.scene3d.components.TerrainComponent;
 
@@ -90,6 +91,23 @@ public class DebugModelBuilder {
                 VertexAttributes.Usage.Position,
                 new Material(ColorAttribute.createDiffuse(Color.WHITE)));
         BoxShapeBuilder.build(meshPartBuilder, width, height, depth);
+        final Model model = modelBuilder.end();
+        return new ModelInstance(model);
+    }
+
+    public static ModelInstance createCylinder(
+        final float radius,
+        final float height
+    ) {
+        final ModelBuilder modelBuilder = new ModelBuilder();
+        modelBuilder.begin();
+        final MeshPartBuilder meshPartBuilder = modelBuilder.part(
+                "part",
+                GL30.GL_LINES,
+                VertexAttributes.Usage.Position,
+                new Material(ColorAttribute.createDiffuse(Color.WHITE)));
+        final float diameter = radius * 2;
+        CylinderShapeBuilder.build(meshPartBuilder, diameter, height, diameter, 12);
         final Model model = modelBuilder.end();
         return new ModelInstance(model);
     }
