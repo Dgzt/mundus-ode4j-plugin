@@ -2,6 +2,7 @@ package com.github.dgzt.mundus.plugin.ode4j.debug;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.CylinderShapeBuilder;
+import com.badlogic.gdx.math.Vector3;
 import com.github.dgzt.mundus.plugin.ode4j.util.Ode4jPhysicsComponentUtils;
 import com.mbrlabs.mundus.commons.scene3d.components.TerrainComponent;
 
@@ -109,6 +111,29 @@ public class DebugModelBuilder {
         final float diameter = radius * 2;
         CylinderShapeBuilder.build(meshPartBuilder, diameter, height, diameter, 12);
         final Model model = modelBuilder.end();
+
+        rotateMesh(model);
+
         return new ModelInstance(model);
+    }
+
+    // LibGDX cylinder is oriented along Y axis,  ODE4j on Z axis
+    // rotate mesh to match ODE definition of a cylinder with the main axis on Z instead of Y
+    // this hard-codes the rotation into the mesh so that we can later use transforms as normal.
+    private static void rotateMesh(Model model){
+        Vector3 v = new Vector3();
+        Mesh mesh = model.meshes.first();
+        int n = mesh.getNumVertices();
+        int stride = mesh.getVertexSize() / 4;  // size of vertex in number of floats
+        float [] vertices = new float[stride*n];
+        mesh.getVertices(vertices);
+        for(int i = 0 ; i < n; i++) {
+            v.set(vertices[i*stride], vertices[i*stride+1], vertices[i*stride+2]);
+            v.rotate(Vector3.X, 90);
+            vertices[i*stride] = v.x;
+            vertices[i*stride+1] = v.y;
+            vertices[i*stride+2] = v.z;
+        }
+        mesh.setVertices(vertices);
     }
 }
