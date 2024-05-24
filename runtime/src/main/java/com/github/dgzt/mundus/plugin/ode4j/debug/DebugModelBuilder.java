@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
@@ -18,6 +19,8 @@ import com.github.dgzt.mundus.plugin.ode4j.util.Ode4jPhysicsComponentUtils;
 import com.mbrlabs.mundus.commons.scene3d.components.TerrainComponent;
 
 public class DebugModelBuilder {
+
+    private static final Vector3 TMP_VECTOR3 = new Vector3();
 
     public static ModelInstance createTerrain(
             final TerrainComponent terrainComponent,
@@ -131,6 +134,61 @@ public class DebugModelBuilder {
 
         rotateMesh(model);
 
+        return new ModelInstance(model);
+    }
+
+    public static ModelInstance createLineMesh(
+            final ModelInstance modelInstance
+    ) {
+        final ModelBuilder modelBuilder = new ModelBuilder();
+        modelBuilder.begin();
+
+        for (int i = 0; i < modelInstance.nodes.size; ++i) {
+            final Node node = modelInstance.nodes.get(i);
+
+            for (int ii = 0; ii < node.parts.size; ++ii) {
+                final Mesh mesh = node.parts.get(ii).meshPart.mesh;
+
+                final MeshPartBuilder meshPartBuilder = modelBuilder.part(
+                        "part" + i + "_" + ii,
+                        GL30.GL_LINES,
+                        VertexAttributes.Usage.Position,
+                        new Material(ColorAttribute.createDiffuse(Color.WHITE))
+                );
+
+                final int numVertices = mesh.getNumVertices();
+                final int numIndices = mesh.getNumIndices();
+                final int stride = mesh.getVertexSize() / 4;
+
+                final float[] origVertices = new float[numVertices * stride];
+                final short[] origIndices = new short[numIndices];
+                // Find offset of position floats per vertex, they are not necessarily the first 3 floats
+                int posOffset = mesh.getVertexAttributes().findByUsage(VertexAttributes.Usage.Position).offset / 4;
+
+                mesh.getVertices(origVertices);
+                mesh.getIndices(origIndices);
+
+                // Get XYZ vertices position data
+                meshPartBuilder.ensureVertices(numVertices);
+                for (int v = 0; v < numVertices; ++v) {
+                    float x = origVertices[stride * v + posOffset];
+                    float y = origVertices[stride * v + 1 + posOffset];
+                    float z = origVertices[stride * v + 2 + posOffset];
+
+                    // Apply the world transform to the vertices
+//                    TMP_VECTOR3.set(x, y, z);
+//                    TMP_VECTOR3.mul(modelInstance.transform);
+
+                    meshPartBuilder.vertex(x, y, z);
+                }
+
+                meshPartBuilder.ensureTriangleIndices(numIndices / 3);
+                for (int iii = 0; iii < numIndices; iii += 3) {
+                    meshPartBuilder.triangle(origIndices[iii], origIndices[iii + 1], origIndices[iii + 2]);
+                }
+            }
+        }
+        final Model model = modelBuilder.end();
         return new ModelInstance(model);
     }
 

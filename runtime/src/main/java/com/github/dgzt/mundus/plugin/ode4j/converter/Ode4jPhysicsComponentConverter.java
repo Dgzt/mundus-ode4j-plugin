@@ -48,6 +48,8 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
             final double height = cylinderGeom.getLength();
             map.put(SaveConstants.CYLINDER_RADIUS, String.valueOf(radius));
             map.put(SaveConstants.CYLINDER_HEIGHT, String.valueOf(height));
+        } else if (ShapeType.MESH == ode4jComponent.getShapeType()) {
+            // NOOP
         }
 
         return map;
@@ -77,6 +79,9 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
                 final double cylinderRadius = Double.parseDouble(orderedMap.get(SaveConstants.CYLINDER_RADIUS));
                 final double cylinderHeight = Double.parseDouble(orderedMap.get(SaveConstants.CYLINDER_HEIGHT));
                 physicsComponent = Ode4jPhysicsComponentUtils.createCylinderPhysicsComponent(gameObject, cylinderRadius, cylinderHeight);
+                break;
+            case MESH:
+                physicsComponent = Ode4jPhysicsComponentUtils.createMeshComponent(gameObject);
                 break;
             default: throw new RuntimeException("Not supported shape type");
         }

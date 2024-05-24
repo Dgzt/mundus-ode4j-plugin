@@ -15,6 +15,7 @@ import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType;
 import com.mbrlabs.mundus.commons.scene3d.components.Component;
+import com.mbrlabs.mundus.commons.scene3d.components.ModelComponent;
 import com.mbrlabs.mundus.commons.scene3d.components.TerrainComponent;
 import com.mbrlabs.mundus.commons.terrain.Terrain;
 
@@ -66,6 +67,11 @@ public class DebugRenderer {
                 } else if (ShapeType.CYLINDER == physicsComponent.getShapeType()) {
                     final DCylinder cylinderGeom = (DCylinder) physicsComponent.getGeom();
                     debugInstance = DebugModelBuilder.createCylinder((float) cylinderGeom.getRadius(), (float) cylinderGeom.getLength());
+                    debugInstance.transform.setTranslation(physicsComponent.gameObject.getPosition(TMP_VECTOR3));
+                } else if (ShapeType.MESH == physicsComponent.getShapeType()) {
+                    final ModelComponent modelComponent = physicsComponent.gameObject.findComponentByType(Component.Type.MODEL);
+                    final ModelInstance modelInstance = modelComponent.getModelInstance();
+                    debugInstance = DebugModelBuilder.createLineMesh(modelInstance);
                     debugInstance.transform.setTranslation(physicsComponent.gameObject.getPosition(TMP_VECTOR3));
                 }
                 physicsComponent.setDebugInstance(debugInstance);

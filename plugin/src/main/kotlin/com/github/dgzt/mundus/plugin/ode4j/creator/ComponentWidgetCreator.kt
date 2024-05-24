@@ -12,6 +12,7 @@ import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent
 import com.github.dgzt.mundus.plugin.ode4j.debug.DebugModelBuilder
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType
 import com.github.dgzt.mundus.plugin.ode4j.util.GameObjectUtils
+import com.github.dgzt.mundus.plugin.ode4j.util.Utils3D
 import com.mbrlabs.mundus.commons.scene3d.components.Component
 import com.mbrlabs.mundus.commons.scene3d.components.ModelComponent
 import com.mbrlabs.mundus.pluginapi.ui.RootWidget
@@ -25,7 +26,7 @@ object ComponentWidgetCreator {
     private const val SPHERE = "Sphere"
     // TODO capsule
     private const val CYLINDER = "Cylinder"
-    // TODO mesh
+    private const val MESH = "Mesh"
 
     fun setup(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
         if (GameObjectUtils.isModelGameObject(component.gameObject)) {
@@ -41,6 +42,7 @@ object ComponentWidgetCreator {
         types.add(BOX)
         types.add(SPHERE)
         types.add(CYLINDER)
+        types.add(MESH)
         rootWidget.addSelectBox(types, getSelectBoxType(component)) {
             innerWidgetCell!!.rootWidget!!.clearWidgets()
 
@@ -48,36 +50,34 @@ object ComponentWidgetCreator {
             destroyGeom(component)
             destroyDebugInstance(component)
 
-            if (it.equals(BOX)) {
-                changeToBox(component, modelComponent, innerWidgetCell!!)
-            }
-
-            if (it.equals(SPHERE)) {
-                changeToSphere(component, modelComponent, innerWidgetCell!!)
-            }
-
-            if (it.equals(CYLINDER)) {
-                changeToCylinder(component, modelComponent, innerWidgetCell!!)
+            when (it) {
+                BOX -> changeToBox(component, modelComponent, innerWidgetCell!!)
+                SPHERE -> changeToSphere(component, modelComponent, innerWidgetCell!!)
+                CYLINDER -> changeToCylinder(component, modelComponent, innerWidgetCell!!)
+                MESH -> changeToMesh(component, modelComponent, innerWidgetCell!!)
+                else -> throw RuntimeException("Unsupported model type!")
             }
         }
         rootWidget.addRow()
 
         innerWidgetCell = rootWidget.addEmptyWidget()
 
-        if (ShapeType.BOX == component.shapeType) {
-            addBoxWidgets(component, innerWidgetCell.rootWidget)
-        } else if (ShapeType.SPHERE == component.shapeType) {
-            addSphereWidgets(component, innerWidgetCell.rootWidget)
-        } else if (ShapeType.CYLINDER == component.shapeType) {
-            addCylinderWidgets(component, innerWidgetCell.rootWidget)
+        when (component.shapeType) {
+            ShapeType.BOX -> addBoxWidgets(component, innerWidgetCell.rootWidget)
+            ShapeType.SPHERE -> addSphereWidgets(component, innerWidgetCell.rootWidget)
+            ShapeType.CYLINDER -> addCylinderWidgets(component, innerWidgetCell.rootWidget)
+            ShapeType.MESH -> addMeshWidgets(component, innerWidgetCell.rootWidget)
+            else -> throw RuntimeException("Unsupported model type!")
         }
     }
 
     private fun getSelectBoxType(component: Ode4jPhysicsComponent): String {
         return when(component.shapeType) {
-            ShapeType.BOX -> return BOX
-            ShapeType.CYLINDER -> return CYLINDER
-            else -> throw RuntimeException("Not suppoted shape type!")
+            ShapeType.BOX -> BOX
+            ShapeType.SPHERE -> SPHERE
+            ShapeType.CYLINDER -> CYLINDER
+            ShapeType.MESH -> MESH
+            else -> throw RuntimeException("Unsupported model type!")
         }
     }
 
@@ -142,6 +142,23 @@ object ComponentWidgetCreator {
         component.geom.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
 
         addCylinderWidgets(component, innerWidgetCell.rootWidget)
+    }
+
+    private fun changeToMesh(
+        component: Ode4jPhysicsComponent,
+        modelComponent: ModelComponent,
+        innerWidgetCell: RootWidgetCell
+    ) {
+        val physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld()
+
+        component.shapeType = ShapeType.MESH
+
+        // Create static mesh geom
+        val triMeshData = physicsWorld.createTriMeshData()
+        Utils3D.fillTriMeshData(modelComponent.modelInstance, triMeshData)
+        component.geom = physicsWorld.createTriMesh(triMeshData)
+
+        addMeshWidgets(component, innerWidgetCell.rootWidget)
     }
 
     private fun addBoxWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
@@ -232,6 +249,14 @@ object ComponentWidgetCreator {
         rootWidget.addSpinner("Height", 0.1f, Float.MAX_VALUE, cylinderGeom.length.toFloat(), 0.1f) {
             cylinderGeom.setParams(cylinderGeom.radius, it.toDouble())
             updateDebugInstanceIfNecessary(component, cylinderGeom)
+        }
+    }
+
+    private fun addMeshWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
+        var static = component.geom.body == null
+
+        rootWidget.addCheckbox("Static", static) {
+            // TODO
         }
     }
 

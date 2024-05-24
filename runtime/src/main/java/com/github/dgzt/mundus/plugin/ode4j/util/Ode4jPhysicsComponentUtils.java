@@ -9,6 +9,8 @@ import com.github.antzGames.gdx.ode4j.ode.DHeightfield;
 import com.github.antzGames.gdx.ode4j.ode.DHeightfieldData;
 import com.github.antzGames.gdx.ode4j.ode.DMass;
 import com.github.antzGames.gdx.ode4j.ode.DSphere;
+import com.github.antzGames.gdx.ode4j.ode.DTriMesh;
+import com.github.antzGames.gdx.ode4j.ode.DTriMeshData;
 import com.github.antzGames.gdx.ode4j.ode.OdeHelper;
 import com.github.antzGames.gdx.ode4j.ode.internal.DxTrimeshHeightfield;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
@@ -132,6 +134,19 @@ public class Ode4jPhysicsComponentUtils {
         geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
 
         return new Ode4jPhysicsComponent(gameObject, ShapeType.CYLINDER, geom);
+    }
+
+    public static Ode4jPhysicsComponent createMeshComponent(
+        final GameObject gameObject
+    ) {
+        final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
+        final ModelComponent modelComponent = gameObject.findComponentByType(Component.Type.MODEL);
+
+        final DTriMeshData triMeshData = physicsWorld.createTriMeshData();
+        Utils3D.fillTriMeshData(modelComponent.getModelInstance(), triMeshData);
+        final DTriMesh geom = physicsWorld.createTriMesh(triMeshData);
+
+        return new Ode4jPhysicsComponent(gameObject, ShapeType.MESH, geom);
     }
 
     public static double heightfieldCallback(

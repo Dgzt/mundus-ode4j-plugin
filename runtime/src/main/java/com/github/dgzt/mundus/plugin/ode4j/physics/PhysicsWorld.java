@@ -54,6 +54,10 @@ public class PhysicsWorld implements Disposable {
         physicsComponents = new Array<>();
     }
 
+    public DTriMeshData createTriMeshData() {
+        return OdeHelper.createTriMeshData();
+    }
+
     public DPlane createPlane() {
         return OdeHelper.createPlane(space, 0.0, 1.0, 0.0, 0.0);
     }

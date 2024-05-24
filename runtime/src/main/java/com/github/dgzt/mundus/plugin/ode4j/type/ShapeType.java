@@ -4,5 +4,6 @@ public enum ShapeType {
     TERRAIN,
     BOX,
     SPHERE,
-    CYLINDER
+    CYLINDER,
+    MESH
 }
