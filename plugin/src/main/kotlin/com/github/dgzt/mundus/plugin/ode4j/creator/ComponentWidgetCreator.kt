@@ -155,7 +155,7 @@ object ComponentWidgetCreator {
 
         // Create static mesh geom
         val triMeshData = physicsWorld.createTriMeshData()
-        Utils3D.fillTriMeshData(modelComponent.modelInstance, triMeshData)
+        Utils3D.fillTriMeshData(component.gameObject, modelComponent.modelInstance, triMeshData)
         component.geom = physicsWorld.createTriMesh(triMeshData)
 
         addMeshWidgets(component, innerWidgetCell.rootWidget)

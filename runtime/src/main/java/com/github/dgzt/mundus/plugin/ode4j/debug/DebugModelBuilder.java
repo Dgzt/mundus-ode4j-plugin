@@ -20,8 +20,6 @@ import com.mbrlabs.mundus.commons.scene3d.components.TerrainComponent;
 
 public class DebugModelBuilder {
 
-    private static final Vector3 TMP_VECTOR3 = new Vector3();
-
     public static ModelInstance createTerrain(
             final TerrainComponent terrainComponent,
             final int terrainWidth,
@@ -175,10 +173,6 @@ public class DebugModelBuilder {
                     float y = origVertices[stride * v + 1 + posOffset];
                     float z = origVertices[stride * v + 2 + posOffset];
 
-                    // Apply the world transform to the vertices
-//                    TMP_VECTOR3.set(x, y, z);
-//                    TMP_VECTOR3.mul(modelInstance.transform);
-
                     meshPartBuilder.vertex(x, y, z);
                 }
 
@@ -189,6 +183,7 @@ public class DebugModelBuilder {
             }
         }
         final Model model = modelBuilder.end();
+        rotateMesh(model);  // TODO why?
         return new ModelInstance(model);
     }
 

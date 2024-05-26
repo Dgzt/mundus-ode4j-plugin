@@ -143,7 +143,7 @@ public class Ode4jPhysicsComponentUtils {
         final ModelComponent modelComponent = gameObject.findComponentByType(Component.Type.MODEL);
 
         final DTriMeshData triMeshData = physicsWorld.createTriMeshData();
-        Utils3D.fillTriMeshData(modelComponent.getModelInstance(), triMeshData);
+        Utils3D.fillTriMeshData(gameObject, modelComponent.getModelInstance(), triMeshData);
         final DTriMesh geom = physicsWorld.createTriMesh(triMeshData);
 
         return new Ode4jPhysicsComponent(gameObject, ShapeType.MESH, geom);
