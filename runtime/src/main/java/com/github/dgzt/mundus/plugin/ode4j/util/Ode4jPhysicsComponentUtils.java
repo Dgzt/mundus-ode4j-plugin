@@ -80,7 +80,9 @@ public class Ode4jPhysicsComponentUtils {
         final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
 
         final DBody body;
-        if (!isStatic) {
+        if (isStatic) {
+            body = null;
+        } else {
             body = physicsWorld.createBody();
             body.setPosition(goPosition.x, goPosition.y, goPosition.z);
 
@@ -90,8 +92,6 @@ public class Ode4jPhysicsComponentUtils {
 
             body.setMass(massInfo);
             body.setAutoDisableDefaults();
-        } else {
-            body = null;
         }
 
         final DBox geom = physicsWorld.createBox(geomWidth, geomHeight, geomDepth);
@@ -111,15 +111,40 @@ public class Ode4jPhysicsComponentUtils {
 
     public static Ode4jPhysicsComponent createSpherePhysicsComponent(
         final GameObject gameObject,
+        final boolean isStatic,
         final double geomRadius
     ) {
         final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
         final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
 
-        final DSphere geom = physicsWorld.createSphere(geomRadius);
-        geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
+        final DBody body;
+        if (isStatic) {
+            body = null;
+        } else {
+            body = physicsWorld.createBody();
+            body.setPosition(goPosition.x, goPosition.y, goPosition.z);
 
-        return new Ode4jPhysicsComponent(gameObject, ShapeType.SPHERE, geom);
+            final DMass massInfo = OdeHelper.createMass();
+            massInfo.setSphere(1.0, geomRadius);
+            massInfo.adjust(10.0);
+
+            body.setMass(massInfo);
+            body.setAutoDisableDefaults();
+        }
+
+        final DSphere geom = physicsWorld.createSphere(geomRadius);
+        if (isStatic) {
+            geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
+        } else {
+            geom.setBody(body);
+        }
+
+        final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.SPHERE, geom);
+        if (!isStatic) {
+            physicsComponent.setBody(body);
+        }
+
+        return physicsComponent;
     }
 
     public static Ode4jPhysicsComponent createCylinderPhysicsComponent(

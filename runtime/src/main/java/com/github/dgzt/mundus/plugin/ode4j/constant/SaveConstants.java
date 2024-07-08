@@ -11,6 +11,7 @@ public class SaveConstants {
     public static final String BOX_DEPTH = "box-depth";
 
     // Sphere shape
+    public static final String SPHERE_STATIC = "sphere-static";
     public static final String SPHERE_RADIUS = "sphere-radius";
 
     // Cylinder shape
