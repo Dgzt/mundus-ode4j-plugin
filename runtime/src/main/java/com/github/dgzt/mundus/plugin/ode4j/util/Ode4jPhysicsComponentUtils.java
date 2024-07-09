@@ -149,16 +149,41 @@ public class Ode4jPhysicsComponentUtils {
 
     public static Ode4jPhysicsComponent createCylinderPhysicsComponent(
             final GameObject gameObject,
+            final boolean isStatic,
             final double geomRadius,
             final double geomHeight
     ) {
         final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
         final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
 
-        final DCylinder geom = physicsWorld.createCylinder(geomRadius, geomHeight);
-        geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
+        final DBody body;
+        if (isStatic) {
+            body = null;
+        } else {
+            body = physicsWorld.createBody();
+            body.setPosition(goPosition.x, goPosition.y, goPosition.z);
 
-        return new Ode4jPhysicsComponent(gameObject, ShapeType.CYLINDER, geom);
+            final DMass massInfo = OdeHelper.createMass();
+            massInfo.setCylinder(1.0, 2, geomRadius, geomHeight);
+            massInfo.adjust(10.0);
+
+            body.setMass(massInfo);
+            body.setAutoDisableDefaults();
+        }
+
+        final DCylinder geom = physicsWorld.createCylinder(geomRadius, geomHeight);
+        if (isStatic) {
+            geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
+        } else {
+            geom.setBody(body);
+        }
+
+        final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.CYLINDER, geom);
+        if (!isStatic) {
+            physicsComponent.setBody(body);
+        }
+
+        return physicsComponent;
     }
 
     public static Ode4jPhysicsComponent createMeshComponent(

@@ -15,6 +15,7 @@ public class SaveConstants {
     public static final String SPHERE_RADIUS = "sphere-radius";
 
     // Cylinder shape
+    public static final String CYLINDER_STATIC = "cylinder-static";
     public static final String CYLINDER_RADIUS = "cylinder-radius";
     public static final String CYLINDER_HEIGHT = "cylinder-height";
 }
