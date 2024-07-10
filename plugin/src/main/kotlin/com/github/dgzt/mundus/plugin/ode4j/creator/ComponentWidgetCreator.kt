@@ -17,8 +17,12 @@ import com.mbrlabs.mundus.commons.scene3d.components.Component
 import com.mbrlabs.mundus.commons.scene3d.components.ModelComponent
 import com.mbrlabs.mundus.pluginapi.ui.RootWidget
 import com.mbrlabs.mundus.pluginapi.ui.RootWidgetCell
+import com.mbrlabs.mundus.pluginapi.ui.WidgetAlign
 
 object ComponentWidgetCreator {
+
+    private const val STATIC_BOTTOM_PAD = 3.0f
+    private const val SIZE_RIGHT_PAD = 10.0f
 
     private val TMP_VECTOR3 = Vector3()
 
@@ -61,6 +65,7 @@ object ComponentWidgetCreator {
         rootWidget.addRow()
 
         innerWidgetCell = rootWidget.addEmptyWidget()
+        innerWidgetCell.grow()
 
         when (component.shapeType) {
             ShapeType.BOX -> addBoxWidgets(component, innerWidgetCell.rootWidget)
@@ -195,25 +200,25 @@ object ComponentWidgetCreator {
                 boxGeom.body = body
                 component.body = body
             }
-        }
+        }.setAlign(WidgetAlign.LEFT).setPad(0.0f, 0.0f, STATIC_BOTTOM_PAD, 0.0f)
         rootWidget.addRow()
-        rootWidget.addLabel("Size:")
+        rootWidget.addLabel("Size:").grow().setAlign(WidgetAlign.LEFT)
         rootWidget.addRow()
         rootWidget.addSpinner("Width", 0.1f, Float.MAX_VALUE, length.get0().toFloat(), 0.1f) {
             length.set0(it.toDouble())
             boxGeom.lengths = length
             updateDebugInstanceIfNecessary(component, boxGeom)
-        }
+        }.grow().setPad(0.0f, SIZE_RIGHT_PAD, 0.0f, 0.0f)
         rootWidget.addSpinner("Height", 0.1f, Float.MAX_VALUE, length.get1().toFloat(), 0.1f) {
             length.set1(it.toDouble())
             boxGeom.lengths = length
             updateDebugInstanceIfNecessary(component, boxGeom)
-        }
+        }.grow().setPad(0.0f, SIZE_RIGHT_PAD, 0.0f, 0.0f)
         rootWidget.addSpinner("Depth", 0.1f, Float.MAX_VALUE, length.get2().toFloat(), 0.1f) {
             length.set2(it.toDouble())
             boxGeom.lengths = length
             updateDebugInstanceIfNecessary(component, boxGeom)
-        }
+        }.grow()
     }
 
     private fun addSphereWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
@@ -222,14 +227,14 @@ object ComponentWidgetCreator {
 
         rootWidget.addCheckbox("Static", statis) {
             // TODO
-        }
+        }.setAlign(WidgetAlign.LEFT).setPad(0.0f, 0.0f, STATIC_BOTTOM_PAD, 0.0f)
         rootWidget.addRow()
-        rootWidget.addLabel("Size:")
+        rootWidget.addLabel("Size:").grow().setAlign(WidgetAlign.LEFT)
         rootWidget.addRow()
         rootWidget.addSpinner("Radius", 0.1f, Float.MAX_VALUE, sphereGeom.radius.toFloat(), 0.1f) {
             sphereGeom.radius = it.toDouble()
             updateDebugInstanceIfNecessary(component, sphereGeom)
-        }
+        }.setAlign(WidgetAlign.LEFT)
     }
 
     private fun addCylinderWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
@@ -238,18 +243,19 @@ object ComponentWidgetCreator {
 
         rootWidget.addCheckbox("Static", static) {
             // TODO
-        }
+        }.setAlign(WidgetAlign.LEFT).setPad(0.0f, 0.0f, STATIC_BOTTOM_PAD, 0.0f)
         rootWidget.addRow()
-        rootWidget.addLabel("Size:")
+        rootWidget.addLabel("Size:").setAlign(WidgetAlign.LEFT)
         rootWidget.addRow()
         rootWidget.addSpinner("Radius", 0.1f, Float.MAX_VALUE, cylinderGeom.radius.toFloat(), 0.1f) {
             cylinderGeom.setParams(it.toDouble(), cylinderGeom.length)
             updateDebugInstanceIfNecessary(component, cylinderGeom)
-        }
+        }.setAlign(WidgetAlign.LEFT).setPad(0.0f, SIZE_RIGHT_PAD, 0.0f, 0.0f)
         rootWidget.addSpinner("Height", 0.1f, Float.MAX_VALUE, cylinderGeom.length.toFloat(), 0.1f) {
             cylinderGeom.setParams(cylinderGeom.radius, it.toDouble())
             updateDebugInstanceIfNecessary(component, cylinderGeom)
-        }
+        }.setAlign(WidgetAlign.LEFT)
+        rootWidget.addEmptyWidget().grow()
     }
 
     private fun addMeshWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
@@ -257,7 +263,8 @@ object ComponentWidgetCreator {
 
         rootWidget.addCheckbox("Static", static) {
             // TODO
-        }
+        }.setAlign(WidgetAlign.LEFT)
+        rootWidget.addEmptyWidget().grow()
     }
 
     private fun destroyBody(physicsComponent: Ode4jPhysicsComponent) {
