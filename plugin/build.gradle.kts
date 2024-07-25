@@ -7,9 +7,9 @@
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.9.0"
+    id("org.jetbrains.kotlin.jvm") version "1.9.20"
 
-    kotlin("kapt") version "1.9.0"
+    kotlin("kapt") version "1.9.20"
 
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
@@ -37,6 +37,11 @@ dependencies {
 //    implementation("com.github.jamestkhan.mundus:commons:master-SNAPSHOT")
 //    implementation("com.github.jamestkhan.mundus:plugin-api:master-SNAPSHOT")
 //    implementation("com.github.jamestkhan.mundus:editor-commons:master-SNAPSHOT")
+
+    implementation("com.github.quickhull3d:quickhull3d:1.0.0")
+    implementation("com.massisframework.j3d:java3d-core:1.6.0.1")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -65,7 +70,10 @@ tasks.withType<Jar> {
         .get()
         .filter {
             it.name.equals("runtime.jar") ||
-            it.name.equals("gdx-ode4j-master-SNAPSHOT.jar")
+            it.name.equals("gdx-ode4j-master-SNAPSHOT.jar") ||
+            it.name.equals("quickhull3d-1.0.0.jar") ||
+            it.name.equals("vecmath-1.6.0.1.jar") ||
+            it.name.equals("java3d-core-1.6.0.1.jar")
         }
         .map(::zipTree)
     from(dependencies)

@@ -5,5 +5,6 @@ public enum ShapeType {
     BOX,
     SPHERE,
     CYLINDER,
-    MESH
+    MESH,
+    ARRAY
 }

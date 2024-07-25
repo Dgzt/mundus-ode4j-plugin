@@ -10,8 +10,10 @@ import com.github.antzGames.gdx.ode4j.ode.OdeHelper
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent
 import com.github.dgzt.mundus.plugin.ode4j.debug.DebugModelBuilder
+import com.github.dgzt.mundus.plugin.ode4j.physics.ArrayGeomData
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType
 import com.github.dgzt.mundus.plugin.ode4j.util.GameObjectUtils
+import com.github.dgzt.mundus.plugin.ode4j.util.MeshUtils
 import com.github.dgzt.mundus.plugin.ode4j.util.Utils3D
 import com.mbrlabs.mundus.commons.scene3d.components.Component
 import com.mbrlabs.mundus.commons.scene3d.components.ModelComponent
@@ -31,6 +33,7 @@ object ComponentWidgetCreator {
     // TODO capsule
     private const val CYLINDER = "Cylinder"
     private const val MESH = "Mesh"
+    private const val ARRAY = "Array"
 
     fun setup(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
         if (GameObjectUtils.isModelGameObject(component.gameObject)) {
@@ -47,6 +50,7 @@ object ComponentWidgetCreator {
         types.add(SPHERE)
         types.add(CYLINDER)
         types.add(MESH)
+        types.add(ARRAY)
         rootWidget.addSelectBox(types, getSelectBoxType(component)) {
             innerWidgetCell!!.rootWidget!!.clearWidgets()
 
@@ -59,6 +63,7 @@ object ComponentWidgetCreator {
                 SPHERE -> changeToSphere(component, modelComponent, innerWidgetCell!!)
                 CYLINDER -> changeToCylinder(component, modelComponent, innerWidgetCell!!)
                 MESH -> changeToMesh(component, modelComponent, innerWidgetCell!!)
+                ARRAY -> changeToArray(component, innerWidgetCell!!)
                 else -> throw RuntimeException("Unsupported model type!")
             }
         }
@@ -72,6 +77,7 @@ object ComponentWidgetCreator {
             ShapeType.SPHERE -> addSphereWidgets(component, innerWidgetCell.rootWidget)
             ShapeType.CYLINDER -> addCylinderWidgets(component, innerWidgetCell.rootWidget)
             ShapeType.MESH -> addMeshWidgets(component, innerWidgetCell.rootWidget)
+            ShapeType.ARRAY -> addArrayWidgets(component, innerWidgetCell.rootWidget)
             else -> throw RuntimeException("Unsupported model type!")
         }
     }
@@ -82,6 +88,7 @@ object ComponentWidgetCreator {
             ShapeType.SPHERE -> SPHERE
             ShapeType.CYLINDER -> CYLINDER
             ShapeType.MESH -> MESH
+            ShapeType.ARRAY -> ARRAY
             else -> throw RuntimeException("Unsupported model type!")
         }
     }
@@ -164,6 +171,32 @@ object ComponentWidgetCreator {
         component.geom = physicsWorld.createTriMesh(triMeshData)
 
         addMeshWidgets(component, innerWidgetCell.rootWidget)
+    }
+
+    private fun changeToArray(
+        component: Ode4jPhysicsComponent,
+        innerWidgetCell: RootWidgetCell
+    ) {
+        val physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld()
+
+        component.shapeType = ShapeType.ARRAY
+
+        // Init vertices
+        val geomData = ArrayGeomData()
+        geomData.vertices.add(Vector3(-10.0f,  0.0f, -10.0f))
+        geomData.vertices.add(Vector3(-10.0f,  0.0f,  10.0f))
+        geomData.vertices.add(Vector3( 10.0f,  0.0f, -10.0f))
+        geomData.vertices.add(Vector3( 10.0f,  0.0f,  10.0f))
+        geomData.vertices.add(Vector3(  0.0f, 10.0f,   0.0f))
+
+        MeshUtils.generateIndices(geomData.vertices, geomData.indices)
+
+
+        val triMeshData = physicsWorld.createTriMeshData()
+        Utils3D.fillTriMeshData(geomData.vertices, geomData.indices, triMeshData)
+        component.geom = physicsWorld.createTriMesh(triMeshData)
+        component.geom.data = geomData
+        addArrayWidgets(component, innerWidgetCell.rootWidget)
     }
 
     private fun addBoxWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
@@ -265,6 +298,52 @@ object ComponentWidgetCreator {
             // TODO
         }.setAlign(WidgetAlign.LEFT)
         rootWidget.addEmptyWidget().grow()
+    }
+
+    private fun addArrayWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
+        var static = component.geom.body == null
+
+        val geomData = component.geom.data as ArrayGeomData
+
+        rootWidget.addCheckbox("Static", static) {
+            // TODO
+        }.setAlign(WidgetAlign.LEFT).setPad(0.0f, 0.0f, STATIC_BOTTOM_PAD, 0.0f)
+        rootWidget.addRow()
+        val arrayWidgetCell = rootWidget.addEmptyWidget()
+        arrayWidgetCell.grow()
+        val arrayWidget = arrayWidgetCell.rootWidget
+        for (i in 0 until geomData.vertices.size) {
+            val vertexData = geomData.vertices.get(i)
+            val vertexWidgetCell = arrayWidget.addEmptyWidget()
+            vertexWidgetCell.grow()
+            val vertexWidget = vertexWidgetCell.rootWidget
+
+            asd(vertexWidget, vertexData)
+            arrayWidget.addRow()
+        }
+        rootWidget.addRow()
+        rootWidget.addTextButton("Add") {
+            geomData.vertices.add(Vector3())
+            asd(arrayWidget, geomData.vertices.last())
+            arrayWidget.addRow()
+        }
+
+    }
+
+    private fun asd(rootWidget: RootWidget, vertexData: Vector3) {
+        val vertexWidgetCell = rootWidget.addEmptyWidget()
+        vertexWidgetCell.grow()
+        val vertexWidget = vertexWidgetCell.rootWidget
+
+        vertexWidget.addSpinner("x:", -1000f, 1000f, vertexData.x) {
+            vertexData.x = it
+        }.grow()
+        vertexWidget.addSpinner("y:", -1000f, 1000f, vertexData.y) {
+            vertexData.y = it
+        }.grow()
+        vertexWidget.addSpinner("z:", -1000f, 1000f, vertexData.z) {
+            vertexData.z = it
+        }.grow()
     }
 
     private fun destroyBody(physicsComponent: Ode4jPhysicsComponent) {

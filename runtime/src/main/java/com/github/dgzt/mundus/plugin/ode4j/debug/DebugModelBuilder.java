@@ -15,6 +15,8 @@ import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.CylinderShapeBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.SphereShapeBuilder;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntArray;
 import com.github.dgzt.mundus.plugin.ode4j.util.Ode4jPhysicsComponentUtils;
 import com.mbrlabs.mundus.commons.scene3d.components.TerrainComponent;
 
@@ -184,6 +186,32 @@ public class DebugModelBuilder {
         }
         final Model model = modelBuilder.end();
         rotateMesh(model);  // TODO why?
+        return new ModelInstance(model);
+    }
+
+    public static ModelInstance createLineMesh(final Array<Vector3> vertices, final IntArray indices) {
+        final ModelBuilder modelBuilder = new ModelBuilder();
+        modelBuilder.begin();
+
+        final MeshPartBuilder meshPartBuilder = modelBuilder.part(
+                "mesh",
+                GL30.GL_LINES,
+                VertexAttributes.Usage.Position,
+                new Material(ColorAttribute.createDiffuse(Color.WHITE))
+        );
+
+        meshPartBuilder.ensureVertices(vertices.size);
+        for (int i = 0; i < vertices.size; ++i) {
+            final Vector3 vertex = vertices.get(i);
+            meshPartBuilder.vertex(vertex.x, vertex.y, vertex.z);
+        }
+
+        meshPartBuilder.ensureTriangleIndices(indices.size / 3);
+        for (int i = 0; i < indices.size; i += 3) {
+            meshPartBuilder.triangle((short) indices.get(i), (short)indices.get(i + 1), (short)indices.get(i + 2));
+        }
+
+        final Model model = modelBuilder.end();
         return new ModelInstance(model);
     }
 

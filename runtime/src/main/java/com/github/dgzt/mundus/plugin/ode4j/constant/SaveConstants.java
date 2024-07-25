@@ -18,4 +18,9 @@ public class SaveConstants {
     public static final String CYLINDER_STATIC = "cylinder-static";
     public static final String CYLINDER_RADIUS = "cylinder-radius";
     public static final String CYLINDER_HEIGHT = "cylinder-height";
+
+    // Array
+    public static final String ARRAY_STATIC = "array-static";
+    public static final String ARRAY_VERTICES = "array-vertices";
+    public static final String ARRAY_INDICES = "array-indices";
 }

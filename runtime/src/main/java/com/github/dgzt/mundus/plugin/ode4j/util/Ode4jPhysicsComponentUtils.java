@@ -2,6 +2,8 @@ package com.github.dgzt.mundus.plugin.ode4j.util;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntArray;
 import com.github.antzGames.gdx.ode4j.ode.DBody;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
@@ -15,6 +17,7 @@ import com.github.antzGames.gdx.ode4j.ode.OdeHelper;
 import com.github.antzGames.gdx.ode4j.ode.internal.DxTrimeshHeightfield;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
+import com.github.dgzt.mundus.plugin.ode4j.physics.ArrayGeomData;
 import com.github.dgzt.mundus.plugin.ode4j.physics.PhysicsWorld;
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType;
 import com.mbrlabs.mundus.commons.scene3d.GameObject;
@@ -197,6 +200,26 @@ public class Ode4jPhysicsComponentUtils {
         final DTriMesh geom = physicsWorld.createTriMesh(triMeshData);
 
         return new Ode4jPhysicsComponent(gameObject, ShapeType.MESH, geom);
+    }
+
+    public static Ode4jPhysicsComponent createArrayComponent(
+       final GameObject gameObject,
+       final Array<Vector3> vertices,
+       final IntArray indices
+    ) {
+        final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
+
+        final DTriMeshData triMeshData = physicsWorld.createTriMeshData();
+        Utils3D.fillTriMeshData(vertices, indices, triMeshData);
+        final ArrayGeomData geomData = new ArrayGeomData();
+        geomData.getVertices().clear();
+        geomData.getVertices().addAll(vertices);
+        geomData.getIndices().clear();
+        geomData.getIndices().addAll(indices);
+        final DTriMesh geom = physicsWorld.createTriMesh(triMeshData);
+        geom.setData(geomData);
+
+        return new Ode4jPhysicsComponent(gameObject, ShapeType.ARRAY, geom);
     }
 
     public static double heightfieldCallback(

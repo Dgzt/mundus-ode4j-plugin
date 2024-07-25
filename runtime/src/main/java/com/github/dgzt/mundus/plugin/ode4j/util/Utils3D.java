@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntArray;
 import com.github.antzGames.gdx.ode4j.ode.DTriMeshData;
 import com.mbrlabs.mundus.commons.scene3d.GameObject;
 
@@ -31,6 +32,30 @@ public class Utils3D {
             indices[i] = indexOut.get(i);
         }
         triMeshData.build(vertices, indices);
+        triMeshData.preprocess();
+    }
+
+    public static void fillTriMeshData(
+            final Array<Vector3> vertices,
+            final IntArray indices,
+            final DTriMeshData triMeshData
+    ) {
+        final float[] verticesOut = new float[vertices.size * 3];
+        final int[] indicesOut = new int[indices.size];
+
+        for (int i = 0; i < vertices.size; ++i) {
+            final int verticesOutIndex = i * 3;
+            final Vector3 vertex = vertices.get(i);
+
+            verticesOut[verticesOutIndex] = vertex.x;
+            verticesOut[verticesOutIndex + 1] = vertex.y;
+            verticesOut[verticesOutIndex + 2] = vertex.z;
+        }
+        for (int i = 0; i < indices.size; ++i) {
+            indicesOut[i] = indices.get(i);
+        }
+
+        triMeshData.build(verticesOut, indicesOut);
         triMeshData.preprocess();
     }
 

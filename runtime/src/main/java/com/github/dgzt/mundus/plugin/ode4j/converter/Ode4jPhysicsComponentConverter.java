@@ -1,13 +1,20 @@
 package com.github.dgzt.mundus.plugin.ode4j.converter;
 
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntArray;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.github.antzGames.gdx.ode4j.math.DVector3C;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
+import com.github.antzGames.gdx.ode4j.ode.DGeom;
 import com.github.antzGames.gdx.ode4j.ode.DSphere;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
 import com.github.dgzt.mundus.plugin.ode4j.constant.SaveConstants;
+import com.github.dgzt.mundus.plugin.ode4j.physics.ArrayGeomData;
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType;
 import com.github.dgzt.mundus.plugin.ode4j.util.Ode4jPhysicsComponentUtils;
 import com.mbrlabs.mundus.commons.mapper.CustomComponentConverter;
@@ -55,6 +62,17 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
             map.put(SaveConstants.CYLINDER_HEIGHT, String.valueOf(height));
         } else if (ShapeType.MESH == ode4jComponent.getShapeType()) {
             // NOOP
+        } else if (ShapeType.ARRAY == ode4jComponent.getShapeType()) {
+            final DGeom arrayGeom = ode4jComponent.getGeom();
+            final ArrayGeomData arrayGeomData = (ArrayGeomData) arrayGeom.getData();
+
+            Json json = new Json(JsonWriter.OutputType.json);
+            final String verticesJson = json.toJson(arrayGeomData.getVertices());
+            final String indicesJson = json.toJson(arrayGeomData.getIndices());
+
+            map.put(SaveConstants.ARRAY_STATIC, String.valueOf(true));
+            map.put(SaveConstants.ARRAY_VERTICES, verticesJson);
+            map.put(SaveConstants.ARRAY_INDICES, indicesJson);
         }
 
         return map;
@@ -89,6 +107,17 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
                 break;
             case MESH:
                 physicsComponent = Ode4jPhysicsComponentUtils.createMeshComponent(gameObject);
+                break;
+            case ARRAY:
+                final boolean arrayStatic = Boolean.parseBoolean(orderedMap.get(SaveConstants.ARRAY_STATIC));
+                final String verticesJson = orderedMap.get(SaveConstants.ARRAY_VERTICES);
+                final String indicesJson = orderedMap.get(SaveConstants.ARRAY_INDICES);
+
+                final Json json = new Json(JsonWriter.OutputType.json);
+                final Array<Vector3> vertices = json.fromJson(Array.class, verticesJson);
+                final IntArray indices = json.fromJson(IntArray.class, indicesJson);
+
+                physicsComponent = Ode4jPhysicsComponentUtils.createArrayComponent(gameObject, vertices, indices);
                 break;
             default: throw new RuntimeException("Not supported shape type");
         }

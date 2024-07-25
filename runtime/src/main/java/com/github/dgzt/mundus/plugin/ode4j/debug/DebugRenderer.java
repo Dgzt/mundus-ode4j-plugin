@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntArray;
 import com.github.antzGames.gdx.ode4j.Ode2GdxMathUtils;
 import com.github.antzGames.gdx.ode4j.math.DVector3C;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
@@ -13,6 +14,7 @@ import com.github.antzGames.gdx.ode4j.ode.DGeom;
 import com.github.antzGames.gdx.ode4j.ode.DSphere;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
+import com.github.dgzt.mundus.plugin.ode4j.physics.ArrayGeomData;
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType;
 import com.mbrlabs.mundus.commons.scene3d.GameObject;
 import com.mbrlabs.mundus.commons.scene3d.components.Component;
@@ -76,6 +78,12 @@ public class DebugRenderer {
                     final ModelInstance modelInstance = modelComponent.getModelInstance();
                     debugInstance = DebugModelBuilder.createLineMesh(modelInstance);
                     debugInstance.transform.mulLeft(physicsComponent.gameObject.getTransform());
+                } else if (ShapeType.ARRAY == physicsComponent.getShapeType()) {
+                    final ArrayGeomData arrayGeomData = (ArrayGeomData) physicsComponent.getGeom().getData();
+                    final IntArray indices = arrayGeomData.getIndices();
+                    if (indices.notEmpty()) {
+                        debugInstance = DebugModelBuilder.createLineMesh(arrayGeomData.getVertices(), indices);
+                    }
                 }
                 physicsComponent.setDebugInstance(debugInstance);
             }
