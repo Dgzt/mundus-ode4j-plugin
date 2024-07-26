@@ -318,32 +318,73 @@ object ComponentWidgetCreator {
             vertexWidgetCell.grow()
             val vertexWidget = vertexWidgetCell.rootWidget
 
-            asd(vertexWidget, vertexData)
+            setupVertexWidget(component, vertexWidget, geomData, vertexData)
             arrayWidget.addRow()
         }
         rootWidget.addRow()
         rootWidget.addTextButton("Add") {
             geomData.vertices.add(Vector3())
-            asd(arrayWidget, geomData.vertices.last())
+            setupVertexWidget(component, arrayWidget, geomData, geomData.vertices.last())
             arrayWidget.addRow()
+
+            regenerateArrayGeom(component, geomData)
         }
 
     }
 
-    private fun asd(rootWidget: RootWidget, vertexData: Vector3) {
+    private fun setupVertexWidget(
+        component: Ode4jPhysicsComponent,
+        rootWidget: RootWidget,
+        geomData: ArrayGeomData,
+        vertexData: Vector3)
+    {
         val vertexWidgetCell = rootWidget.addEmptyWidget()
         vertexWidgetCell.grow()
         val vertexWidget = vertexWidgetCell.rootWidget
 
         vertexWidget.addSpinner("x:", -1000f, 1000f, vertexData.x) {
-            vertexData.x = it
+            if (!containsVertex(geomData.vertices, it, vertexData.y, vertexData.z)) {
+                vertexData.x = it
+                regenerateArrayGeom(component, geomData)
+            }
         }.grow()
         vertexWidget.addSpinner("y:", -1000f, 1000f, vertexData.y) {
-            vertexData.y = it
+            if (!containsVertex(geomData.vertices, vertexData.x, it, vertexData.z)) {
+                vertexData.y = it
+                regenerateArrayGeom(component, geomData)
+            }
         }.grow()
         vertexWidget.addSpinner("z:", -1000f, 1000f, vertexData.z) {
-            vertexData.z = it
+            if (!containsVertex(geomData.vertices, vertexData.x, vertexData.y, it)) {
+                vertexData.z = it
+                regenerateArrayGeom(component, geomData)
+            }
         }.grow()
+    }
+
+    private fun containsVertex(vertices: Array<Vector3>, x: Float, y: Float, z: Float): Boolean {
+        for (vertex in vertices) {
+            if (vertex.x == x && vertex.y == y && vertex.z == z) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    private fun regenerateArrayGeom(component: Ode4jPhysicsComponent, geomData: ArrayGeomData) {
+        destroyBody(component)
+        destroyGeom(component)
+        destroyDebugInstance(component)
+
+        val physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld()
+
+        MeshUtils.generateIndices(geomData.vertices, geomData.indices)
+
+        val triMeshData = physicsWorld.createTriMeshData()
+        Utils3D.fillTriMeshData(geomData.vertices, geomData.indices, triMeshData)
+        component.geom = physicsWorld.createTriMesh(triMeshData)
+        component.geom.data = geomData
     }
 
     private fun destroyBody(physicsComponent: Ode4jPhysicsComponent) {
