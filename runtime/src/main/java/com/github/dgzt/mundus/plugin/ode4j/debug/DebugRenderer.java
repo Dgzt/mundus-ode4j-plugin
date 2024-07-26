@@ -83,6 +83,7 @@ public class DebugRenderer {
                     final IntArray indices = arrayGeomData.getIndices();
                     if (indices.notEmpty()) {
                         debugInstance = DebugModelBuilder.createLineMesh(arrayGeomData.getVertices(), indices);
+                        debugInstance.transform.setTranslation(gameObject.getPosition(TMP_VECTOR3));
                     }
                 }
                 physicsComponent.setDebugInstance(debugInstance);
