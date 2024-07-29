@@ -32,6 +32,15 @@ class GameObjectModifiedEventListener : GameObjectModifiedListener {
         geom.setPosition(TMP_VECTOR3.x.toDouble(), TMP_VECTOR3.y.toDouble(), TMP_VECTOR3.z.toDouble())
 
         if (physicsComponent.debugInstance != null) {
+            if (GameObjectUtils.isTerrainGameObject(gameObject)) {
+                val terrainComponent = GameObjectUtils.getTerrainComponent(gameObject)
+                val terrain = terrainComponent.terrainAsset.terrain
+                val terrainWidth = terrain.terrainWidth
+                val terrainDepth = terrain.terrainDepth
+
+                TMP_VECTOR3.add(terrainWidth / 2.0f, 0f, terrainDepth / 2.0f)
+            }
+
             physicsComponent.debugInstance.transform.setTranslation(TMP_VECTOR3)
         }
     }
