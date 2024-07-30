@@ -25,6 +25,8 @@ object ComponentWidgetCreator {
 
     private const val STATIC_BOTTOM_PAD = 3.0f
     private const val SIZE_RIGHT_PAD = 10.0f
+    private const val VERTEX_WIDGET_TOP_BOTTOM_PAD = 1.0f
+    private const val VERTEX_WIDGET_DELETE_BUTTON_LEFT_PAD = 2.0f
 
     private val TMP_VECTOR3 = Vector3()
 
@@ -347,19 +349,24 @@ object ComponentWidgetCreator {
                 vertexData.x = it
                 regenerateArrayGeom(component, geomData)
             }
-        }.grow()
+        }.grow().setPad(VERTEX_WIDGET_TOP_BOTTOM_PAD, 0.0f, VERTEX_WIDGET_TOP_BOTTOM_PAD, 0.0f)
         vertexWidget.addSpinner("y:", -1000f, 1000f, vertexData.y) {
             if (!containsVertex(geomData.vertices, vertexData.x, it, vertexData.z)) {
                 vertexData.y = it
                 regenerateArrayGeom(component, geomData)
             }
-        }.grow()
+        }.grow().setPad(VERTEX_WIDGET_TOP_BOTTOM_PAD, 0.0f, VERTEX_WIDGET_TOP_BOTTOM_PAD, 0.0f)
         vertexWidget.addSpinner("z:", -1000f, 1000f, vertexData.z) {
             if (!containsVertex(geomData.vertices, vertexData.x, vertexData.y, it)) {
                 vertexData.z = it
                 regenerateArrayGeom(component, geomData)
             }
-        }.grow()
+        }.grow().setPad(VERTEX_WIDGET_TOP_BOTTOM_PAD, 0.0f, VERTEX_WIDGET_TOP_BOTTOM_PAD, 0.0f)
+        vertexWidget.addTextButton("X") {
+            vertexWidgetCell.delete()
+            geomData.vertices.removeValue(vertexData, true)
+            regenerateArrayGeom(component, geomData)
+        }.setPad(0.0f, 0.0f, 0.0f, VERTEX_WIDGET_DELETE_BUTTON_LEFT_PAD)
     }
 
     private fun containsVertex(vertices: Array<Vector3>, x: Float, y: Float, z: Float): Boolean {
