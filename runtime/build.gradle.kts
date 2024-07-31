@@ -31,7 +31,7 @@ dependencies {
 
     api("com.github.antzGames:gdx-ode4j:master-SNAPSHOT")
 
-    api("com.github.Dgzt.Mundus:commons:plugin-new-component-SNAPSHOT")
+    api("com.github.Dgzt.Mundus:commons:plugin-new-component-terrain-system-SNAPSHOT")
 
 //    implementation("com.github.jamestkhan.mundus:commons:master-SNAPSHOT")
 //    implementation("com.github.jamestkhan.mundus:plugin-api:master-SNAPSHOT")
