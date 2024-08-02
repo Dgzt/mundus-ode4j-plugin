@@ -58,6 +58,10 @@ public class Ode4jPhysicsComponentUtils {
         return new Ode4jPhysicsComponent(gameObject, ShapeType.TERRAIN, heightfield);
     }
 
+    public static Ode4jPhysicsComponent createTerrainSystemPhysicsComponent(final GameObject gameObject) {
+        return new Ode4jPhysicsComponent(gameObject, ShapeType.TERRAIN);
+    }
+
     public static Ode4jPhysicsComponent createBoxPhysicsComponent(
             final GameObject gameObject,
             final boolean isStatic

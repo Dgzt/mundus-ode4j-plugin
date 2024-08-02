@@ -85,7 +85,11 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
         final Ode4jPhysicsComponent physicsComponent;
         switch (shapeType) {
             case TERRAIN:
-                physicsComponent = Ode4jPhysicsComponentUtils.createTerrainPhysicsComponent(gameObject);
+                if (gameObject.findComponentByType(Component.Type.TERRAIN) == null) {
+                    physicsComponent = Ode4jPhysicsComponentUtils.createTerrainSystemPhysicsComponent(gameObject);
+                } else {
+                    physicsComponent = Ode4jPhysicsComponentUtils.createTerrainPhysicsComponent(gameObject);
+                }
                 break;
             case BOX:
                 final boolean boxStatic = Boolean.parseBoolean(orderedMap.get(SaveConstants.BOX_STATIC));

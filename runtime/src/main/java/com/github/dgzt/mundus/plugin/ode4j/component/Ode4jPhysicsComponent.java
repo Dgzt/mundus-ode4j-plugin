@@ -11,6 +11,7 @@ import com.mbrlabs.mundus.commons.scene3d.components.Component;
 public class Ode4jPhysicsComponent extends AbstractComponent {
 
     private ShapeType shapeType;
+    // The geom can be null only in that case if the game object is terrain system (parent)
     private DGeom geom;
     // The body can be null if it is a static game object
     private DBody body;
@@ -18,6 +19,13 @@ public class Ode4jPhysicsComponent extends AbstractComponent {
     private ModelInstance debugInstance;
     // User-defined data. It can be null
     private Object data;
+
+    public Ode4jPhysicsComponent(
+            final GameObject go,
+            final ShapeType shapeType
+    ) {
+        this(go, shapeType, null);
+    }
 
     public Ode4jPhysicsComponent(
             final GameObject go,
