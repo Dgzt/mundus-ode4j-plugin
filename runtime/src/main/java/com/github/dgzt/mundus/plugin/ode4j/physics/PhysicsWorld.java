@@ -16,7 +16,7 @@ import com.github.antzGames.gdx.ode4j.ode.DTriMeshData;
 import com.github.antzGames.gdx.ode4j.ode.DWorld;
 import com.github.antzGames.gdx.ode4j.ode.OdeHelper;
 import com.github.antzGames.gdx.ode4j.ode.internal.DxTrimeshHeightfield;
-import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
+import com.github.dgzt.mundus.plugin.ode4j.component.AbstractOde4jPhysicsComponent;
 import com.github.dgzt.mundus.plugin.ode4j.config.RuntimeConfig;
 
 public class PhysicsWorld implements Disposable {
@@ -27,7 +27,7 @@ public class PhysicsWorld implements Disposable {
     private final AbstractNearCallback nearCallback;
     private final UpdateCallback updateCallback;
     private final double step;
-    private final Array<Ode4jPhysicsComponent> physicsComponents;
+    private final Array<AbstractOde4jPhysicsComponent> physicsComponents;
 
     public PhysicsWorld(final RuntimeConfig config) {
         OdeHelper.initODE2(0);
@@ -104,7 +104,7 @@ public class PhysicsWorld implements Disposable {
         OdeHelper.closeODE();
     }
 
-    public Array<Ode4jPhysicsComponent> getPhysicsComponents() {
+    public Array<AbstractOde4jPhysicsComponent> getPhysicsComponents() {
         return physicsComponents;
     }
 }
