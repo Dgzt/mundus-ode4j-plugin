@@ -1,14 +1,17 @@
 package com.github.dgzt.mundus.plugin.ode4j.component;
 
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.math.Quaternion;
+import com.github.antzGames.gdx.ode4j.Ode2GdxMathUtils;
+import com.github.antzGames.gdx.ode4j.math.DVector3C;
 import com.github.antzGames.gdx.ode4j.ode.DBody;
 import com.github.antzGames.gdx.ode4j.ode.DGeom;
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType;
 import com.mbrlabs.mundus.commons.scene3d.GameObject;
-import com.mbrlabs.mundus.commons.scene3d.components.AbstractComponent;
 import com.mbrlabs.mundus.commons.scene3d.components.Component;
 
-public class Ode4jPhysicsComponent extends AbstractComponent {
+public class Ode4jPhysicsComponent extends AbstractOde4jPhysicsComponent {
 
     private ShapeType shapeType;
     private DGeom geom;
@@ -33,14 +36,38 @@ public class Ode4jPhysicsComponent extends AbstractComponent {
     }
 
     @Override
-    public void update(float delta) {
-        // NOOP
+    public void update() {
+        if (body != null) {
+            final DVector3C position = geom.getPosition();
+
+            final float x = (float) position.get0();
+            final float y = (float) position.get1();
+            final float z = (float) position.get2();
+
+            final Quaternion quaternion = Ode2GdxMathUtils.getGdxQuaternion(geom.getQuaternion());
+
+            gameObject.setLocalRotation(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+            gameObject.setLocalPosition(x, y, z);
+
+            if (debugInstance != null) {
+                debugInstance.transform.set(quaternion);
+                debugInstance.transform.setTranslation(x, y, z);
+            }
+        }
+    }
+
+    @Override
+    public void debugRender(ModelBatch modelBatch) {
+        if (debugInstance != null) {
+            modelBatch.render(debugInstance);
+        }
     }
 
     @Override
     public Component clone(final GameObject gameObject) {
         final Ode4jPhysicsComponent clonedComponent = new Ode4jPhysicsComponent(gameObject, shapeType, geom);
         clonedComponent.type = type;
+        // TODO other properties
         return clonedComponent;
     }
 
