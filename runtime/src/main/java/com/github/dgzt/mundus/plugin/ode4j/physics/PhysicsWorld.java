@@ -6,6 +6,7 @@ import com.github.antzGames.gdx.ode4j.ode.DBody;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
 import com.github.antzGames.gdx.ode4j.ode.DHeightfieldData;
+import com.github.antzGames.gdx.ode4j.ode.DHinge2Joint;
 import com.github.antzGames.gdx.ode4j.ode.DJointGroup;
 import com.github.antzGames.gdx.ode4j.ode.DPlane;
 import com.github.antzGames.gdx.ode4j.ode.DSapSpace;
@@ -89,6 +90,10 @@ public class PhysicsWorld implements Disposable {
 
     public DBody createBody() {
         return OdeHelper.createBody(world);
+    }
+
+    public DHinge2Joint createHinge2Joint() {
+        return OdeHelper.createHinge2Joint(world);
     }
 
     public void update() {
