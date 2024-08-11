@@ -16,6 +16,16 @@ public class RuntimeConfig {
 
     private int quickStepNumIterations = 20;
 
+    private double angularDamping = 0.0;
+
+    private boolean autoDisableFlag = false;
+
+    private double autoDisableLinearThreshold = 0.01;
+
+    private double autoDisableAngularThreshold = 0.01;
+
+    private double autoDisableTime = 0.0;
+
     private AbstractNearCallback nearCallback = new DefaultNearCallback();
 
     private double step = 1 / 30.0;
@@ -52,6 +62,71 @@ public class RuntimeConfig {
 
     public void setQuickStepNumIterations(int quickStepNumIterations) {
         this.quickStepNumIterations = quickStepNumIterations;
+    }
+
+    public double getAngularDamping() {
+        return angularDamping;
+    }
+
+    /**
+     * {@link com.github.antzGames.gdx.ode4j.ode.DWorld#setAngularDamping(double)}
+     *
+     * @param angularDamping Set the world's angular damping scale.
+     */
+    public void setAngularDamping(double angularDamping) {
+        this.angularDamping = angularDamping;
+    }
+
+    public boolean isAutoDisableFlag() {
+        return autoDisableFlag;
+    }
+
+    /**
+     * {@link com.github.antzGames.gdx.ode4j.ode.DWorld#setAutoDisableFlag(boolean)}
+     *
+     * @param autoDisableFlag Set auto disable flag for newly created bodies.
+     */
+    public void setAutoDisableFlag(boolean autoDisableFlag) {
+        this.autoDisableFlag = autoDisableFlag;
+    }
+
+    public double getAutoDisableLinearThreshold() {
+        return autoDisableLinearThreshold;
+    }
+
+    /**
+     * {@link com.github.antzGames.gdx.ode4j.ode.DWorld#setAutoDisableLinearThreshold(double)}
+     *
+     * @param autoDisableLinearThreshold Set auto disable linear threshold for newly created bodies.
+     */
+    public void setAutoDisableLinearThreshold(double autoDisableLinearThreshold) {
+        this.autoDisableLinearThreshold = autoDisableLinearThreshold;
+    }
+
+    public double getAutoDisableAngularThreshold() {
+        return autoDisableAngularThreshold;
+    }
+
+    /**
+     * {@link com.github.antzGames.gdx.ode4j.ode.DWorld#setAutoDisableAngularThreshold(double)}
+     *
+     * @param autoDisableAngularThreshold Set auto disable angular threshold for newly created bodies.
+     */
+    public void setAutoDisableAngularThreshold(double autoDisableAngularThreshold) {
+        this.autoDisableAngularThreshold = autoDisableAngularThreshold;
+    }
+
+    public double getAutoDisableTime() {
+        return autoDisableTime;
+    }
+
+    /**
+     * {@link com.github.antzGames.gdx.ode4j.ode.DWorld#setAutoDisableTime(double)}
+     *
+     * @param autoDisableTime Set auto disable time for newly created bodies.
+     */
+    public void setAutoDisableTime(double autoDisableTime) {
+        this.autoDisableTime = autoDisableTime;
     }
 
     public AbstractNearCallback getNearCallback() {
