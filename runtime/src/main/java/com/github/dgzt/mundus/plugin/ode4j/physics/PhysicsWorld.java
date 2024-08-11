@@ -37,6 +37,11 @@ public class PhysicsWorld implements Disposable {
         world.setCFM(config.getCfm());
         world.setERP(config.getErp());
         world.setQuickStepNumIterations(config.getQuickStepNumIterations());
+        world.setAngularDamping(config.getAngularDamping());
+        world.setAutoDisableFlag(config.isAutoDisableFlag());
+        world.setAutoDisableLinearThreshold(config.getAutoDisableLinearThreshold());
+        world.setAutoDisableAngularThreshold(config.getAutoDisableAngularThreshold());
+        world.setAutoDisableTime(config.getAutoDisableTime());
 
         // TODO support other spaces
         space = OdeHelper.createSapSpace(null, DSapSpace.AXES.XZY);
