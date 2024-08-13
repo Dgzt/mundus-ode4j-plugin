@@ -26,10 +26,12 @@ public class RuntimeConfig {
 
     private double autoDisableTime = 0.0;
 
+    // TODO create DefaultNearCallback in PhysicsWorld
     private AbstractNearCallback nearCallback = new DefaultNearCallback();
 
     private double step = 1 / 30.0;
 
+    // TODO create DefaultUpdateCallback in PhysicsWorld
     private UpdateCallback updateCallback = new DefaultUpdateCallback();
 
     public Vector3 getGravity() {
