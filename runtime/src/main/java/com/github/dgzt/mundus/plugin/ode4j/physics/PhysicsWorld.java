@@ -96,6 +96,8 @@ public class PhysicsWorld implements Disposable {
         return OdeHelper.createHinge2Joint(world);
     }
 
+    // TODO add more joints
+
     public void update() {
         space.collide(null, nearCallback);
 
