@@ -80,13 +80,13 @@ You need to initialize the plugin and pass the converter to Mundus:
 
 ```java
     @Override
-	public void create () {
-    MundusOde4jRuntimePlugin.init();
-    ...
+    public void create () {
+        MundusOde4jRuntimePlugin.init();
+        ...
 
-    mundus = new Mundus(Gdx.files.internal("MundusExampleProject"), config, new Ode4jPhysicsComponentConverter());
-    ...
-	}
+        mundus = new Mundus(Gdx.files.internal("MundusExampleProject"), config, new Ode4jPhysicsComponentConverter());
+        ...
+    }
 ```
 
 You need to update plugin in render method:
@@ -94,7 +94,7 @@ You need to update plugin in render method:
 ```java
     @Override
     public void render () {
-    MundusOde4jRuntimePlugin.update();
-    ...
+        MundusOde4jRuntimePlugin.update();
+        ...
     }
 ```
