@@ -51,7 +51,8 @@ object ComponentWidgetCreator {
         types.add(BOX)
         types.add(SPHERE)
         types.add(CYLINDER)
-        types.add(MESH)
+        // TODO The rotation of mesh is not good, so fix this first
+//        types.add(MESH)
         types.add(ARRAY)
         rootWidget.addSelectBox(types, getSelectBoxType(component)) {
             innerWidgetCell!!.rootWidget!!.clearWidgets()
