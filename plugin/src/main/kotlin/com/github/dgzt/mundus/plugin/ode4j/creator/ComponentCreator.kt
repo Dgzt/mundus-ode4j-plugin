@@ -13,7 +13,7 @@ object ComponentCreator {
         if (GameObjectUtils.isTerrainGameObject(gameObject)) {
             physicsComponent = Ode4jPhysicsComponentUtils.createTerrainPhysicsComponent(gameObject)
         } else if (GameObjectUtils.isModelGameObject(gameObject)) {
-            physicsComponent = Ode4jPhysicsComponentUtils.createBoxPhysicsComponent(gameObject, true)
+            physicsComponent = Ode4jPhysicsComponentUtils.createBoxPhysicsComponent(gameObject)
         } else {
             throw UnsupportedOperationException("Not supported game object type!")
         }

@@ -6,7 +6,6 @@ import com.github.antzGames.gdx.ode4j.math.DVector3
 import com.github.antzGames.gdx.ode4j.ode.DBox
 import com.github.antzGames.gdx.ode4j.ode.DCylinder
 import com.github.antzGames.gdx.ode4j.ode.DSphere
-import com.github.antzGames.gdx.ode4j.ode.OdeHelper
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent
 import com.github.dgzt.mundus.plugin.ode4j.debug.DebugModelBuilder
@@ -14,6 +13,7 @@ import com.github.dgzt.mundus.plugin.ode4j.physics.ArrayGeomData
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType
 import com.github.dgzt.mundus.plugin.ode4j.util.GameObjectUtils
 import com.github.dgzt.mundus.plugin.ode4j.util.MeshUtils
+import com.github.dgzt.mundus.plugin.ode4j.util.OdePhysicsUtils
 import com.github.dgzt.mundus.plugin.ode4j.util.Utils3D
 import com.mbrlabs.mundus.commons.scene3d.components.Component
 import com.mbrlabs.mundus.commons.scene3d.components.ModelComponent
@@ -215,27 +215,17 @@ object ComponentWidgetCreator {
             destroyGeom(component)
             destroyDebugInstance(component)
 
-            boxGeom = MundusOde4jRuntimePlugin.getPhysicsWorld().createBox(length.get0(), length.get1(), length.get2())
-            component.geom = boxGeom
-
-            val goPosition = component.gameObject.getPosition(Vector3())
             static = it
+            val goPosition = component.gameObject.getPosition(Vector3())
+
             if (static) {
-                component.geom.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
+                boxGeom = OdePhysicsUtils.createBox(goPosition, length.get0(), length.get1(), length.get2())
             } else {
-                val body = MundusOde4jRuntimePlugin.getPhysicsWorld().createBody()
-                body.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
-
-                // TODO set mass info from UI
-                val massInfo = OdeHelper.createMass()
-                massInfo.setBox(1.0, length)
-                massInfo.adjust(10.0)
-                body.mass = massInfo
-                body.setAutoDisableDefaults()
-
-                boxGeom.body = body
-                component.body = body
+                // TODO set mass from UI
+                boxGeom = OdePhysicsUtils.createBox(goPosition, length.get0(), length.get1(), length.get2(), 10.0)
+                component.body = boxGeom.body
             }
+            component.geom = boxGeom
         }.setAlign(WidgetAlign.LEFT).setPad(0.0f, 0.0f, STATIC_BOTTOM_PAD, 0.0f)
         rootWidget.addRow()
         rootWidget.addLabel("Size:").grow().setAlign(WidgetAlign.LEFT)
@@ -259,9 +249,9 @@ object ComponentWidgetCreator {
 
     private fun addSphereWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
         var sphereGeom = component.geom as DSphere
-        var statis = component.geom.body == null
+        var static = component.geom.body == null
 
-        rootWidget.addCheckbox("Static", statis) {
+        rootWidget.addCheckbox("Static", static) {
             // TODO
         }.setAlign(WidgetAlign.LEFT).setPad(0.0f, 0.0f, STATIC_BOTTOM_PAD, 0.0f)
         rootWidget.addRow()

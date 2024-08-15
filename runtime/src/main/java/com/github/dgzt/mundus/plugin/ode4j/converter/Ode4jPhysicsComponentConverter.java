@@ -42,24 +42,33 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
             final DBox boxGeom = (DBox) ode4jComponent.getGeom();
             final DVector3C boxLength = boxGeom.getLengths();
 
-            map.put(SaveConstants.BOX_STATIC, String.valueOf(true));
             map.put(SaveConstants.BOX_WIDTH, String.valueOf(boxLength.get0()));
             map.put(SaveConstants.BOX_HEIGHT, String.valueOf(boxLength.get1()));
             map.put(SaveConstants.BOX_DEPTH, String.valueOf(boxLength.get2()));
+            if (boxGeom.getBody() != null) {
+                final double mass = boxGeom.getBody().getMass().getMass();
+                map.put(SaveConstants.BOX_MASS, String.valueOf(mass));
+            }
         } else if (ShapeType.SPHERE == ode4jComponent.getShapeType()) {
             final DSphere sphereGeom = (DSphere) ode4jComponent.getGeom();
             final double radius = sphereGeom.getRadius();
 
-            map.put(SaveConstants.SPHERE_STATIC, String.valueOf(true));
             map.put(SaveConstants.SPHERE_RADIUS, String.valueOf(radius));
+            if (sphereGeom.getBody() != null) {
+                final double mass = sphereGeom.getBody().getMass().getMass();
+                map.put(SaveConstants.SPHERE_MASS, String.valueOf(mass));
+            }
         } else if (ShapeType.CYLINDER == ode4jComponent.getShapeType()) {
             final DCylinder cylinderGeom = (DCylinder) ode4jComponent.getGeom();
             final double radius = cylinderGeom.getRadius();
             final double height = cylinderGeom.getLength();
 
-            map.put(SaveConstants.CYLINDER_STATIC, String.valueOf(true));
             map.put(SaveConstants.CYLINDER_RADIUS, String.valueOf(radius));
             map.put(SaveConstants.CYLINDER_HEIGHT, String.valueOf(height));
+            if (cylinderGeom.getBody() != null) {
+                final double mass = cylinderGeom.getBody().getMass().getMass();
+                map.put(SaveConstants.CYLINDER_MASS, String.valueOf(mass));
+            }
         } else if (ShapeType.MESH == ode4jComponent.getShapeType()) {
             // NOOP
         } else if (ShapeType.ARRAY == ode4jComponent.getShapeType()) {
@@ -88,22 +97,34 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
                 physicsComponent = Ode4jPhysicsComponentUtils.createTerrainPhysicsComponent(gameObject);
                 break;
             case BOX:
-                final boolean boxStatic = Boolean.parseBoolean(orderedMap.get(SaveConstants.BOX_STATIC));
                 final double boxWidth = Double.parseDouble(orderedMap.get(SaveConstants.BOX_WIDTH));
                 final double boxHeight = Double.parseDouble(orderedMap.get(SaveConstants.BOX_HEIGHT));
                 final double boxDepth = Double.parseDouble(orderedMap.get(SaveConstants.BOX_DEPTH));
-                physicsComponent = Ode4jPhysicsComponentUtils.createBoxPhysicsComponent(gameObject, boxStatic, boxWidth, boxHeight, boxDepth);
+                if (orderedMap.containsKey(SaveConstants.BOX_MASS)) {
+                    final double boxMass = Double.parseDouble(orderedMap.get(SaveConstants.BOX_MASS));
+                    physicsComponent = Ode4jPhysicsComponentUtils.createBoxPhysicsComponent(gameObject, boxWidth, boxHeight, boxDepth, boxMass);
+                } else {
+                    physicsComponent = Ode4jPhysicsComponentUtils.createBoxPhysicsComponent(gameObject, boxWidth, boxHeight, boxDepth);
+                }
                 break;
             case SPHERE:
-                final boolean sphereStatic = Boolean.parseBoolean(orderedMap.get(SaveConstants.SPHERE_STATIC));
                 final double sphereRadius = Double.parseDouble(orderedMap.get(SaveConstants.SPHERE_RADIUS));
-                physicsComponent = Ode4jPhysicsComponentUtils.createSpherePhysicsComponent(gameObject, sphereStatic, sphereRadius);
+                if (orderedMap.containsKey(SaveConstants.SPHERE_MASS)) {
+                    final double sphereMass = Double.parseDouble(orderedMap.get(SaveConstants.SPHERE_MASS));
+                    physicsComponent = Ode4jPhysicsComponentUtils.createSpherePhysicsComponent(gameObject, sphereRadius, sphereMass);
+                } else {
+                    physicsComponent = Ode4jPhysicsComponentUtils.createSpherePhysicsComponent(gameObject, sphereRadius);
+                }
                 break;
             case CYLINDER:
-                final boolean cylinderStatic = Boolean.parseBoolean(orderedMap.get(SaveConstants.CYLINDER_STATIC));
                 final double cylinderRadius = Double.parseDouble(orderedMap.get(SaveConstants.CYLINDER_RADIUS));
                 final double cylinderHeight = Double.parseDouble(orderedMap.get(SaveConstants.CYLINDER_HEIGHT));
-                physicsComponent = Ode4jPhysicsComponentUtils.createCylinderPhysicsComponent(gameObject, cylinderStatic, cylinderRadius, cylinderHeight);
+                if (orderedMap.containsKey(SaveConstants.CYLINDER_MASS)) {
+                    final double cylinderMass = Double.parseDouble(orderedMap.get(SaveConstants.CYLINDER_MASS));
+                    physicsComponent = Ode4jPhysicsComponentUtils.createCylinderPhysicsComponent(gameObject, cylinderRadius, cylinderHeight, cylinderMass);
+                } else {
+                    physicsComponent = Ode4jPhysicsComponentUtils.createCylinderPhysicsComponent(gameObject, cylinderRadius, cylinderHeight);
+                }
                 break;
             case MESH:
                 physicsComponent = Ode4jPhysicsComponentUtils.createMeshComponent(gameObject);
