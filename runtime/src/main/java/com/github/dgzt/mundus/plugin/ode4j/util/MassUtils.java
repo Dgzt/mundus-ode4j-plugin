@@ -7,6 +7,7 @@ import com.github.antzGames.gdx.ode4j.ode.OdeHelper;
 public class MassUtils {
 
     private static final double DENSITY = 1.0;
+    private static final int CYLINDER_DIRECTION = 2; // 2 = Y
 
     private static DMass MASS_INSTANCE = null;
 
@@ -35,6 +36,17 @@ public class MassUtils {
     ) {
         final DMass massInfo = createOrGetMassInfo();
         massInfo.setSphere(DENSITY, radius);
+        massInfo.adjust(mass);
+        return massInfo;
+    }
+
+    public static DMass createCylinderMass(
+        final double radius,
+        final double height,
+        final double mass
+    ) {
+        final DMass massInfo = createOrGetMassInfo();
+        massInfo.setCylinder(DENSITY, CYLINDER_DIRECTION, radius, height);
         massInfo.adjust(mass);
         return massInfo;
     }

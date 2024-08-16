@@ -4,9 +4,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.github.antzGames.gdx.ode4j.ode.DBody;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
-import com.github.antzGames.gdx.ode4j.ode.DMass;
 import com.github.antzGames.gdx.ode4j.ode.DSphere;
-import com.github.antzGames.gdx.ode4j.ode.OdeHelper;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.physics.PhysicsWorld;
 
@@ -162,11 +160,7 @@ public class OdePhysicsUtils {
             body = physicsWorld.createBody();
             body.setPosition(goPosition.x, goPosition.y, goPosition.z);
 
-            final DMass massInfo = OdeHelper.createMass();
-            massInfo.setCylinder(1.0, 2, geomRadius, geomHeight);
-            massInfo.adjust(mass);
-
-            body.setMass(massInfo);
+            body.setMass(MassUtils.createCylinderMass(geomRadius, geomHeight, mass));
             body.setAutoDisableDefaults();
         }
 

@@ -326,23 +326,64 @@ object ComponentWidgetCreator {
 
     private fun addCylinderWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
         var cylinderGeom = component.geom as DCylinder
+        var radius = cylinderGeom.radius
+        var length = cylinderGeom.length
+
         var static = component.geom.body == null
 
+        var massParentWidgetCell: RootWidgetCell? = null
+        var mass = if (static) DEFAULT_MASS else cylinderGeom.body.mass.mass
+
         rootWidget.addCheckbox("Static", static) {
-            // TODO
+            radius = cylinderGeom.radius
+            length = cylinderGeom.length
+            destroyBody(component)
+            destroyGeom(component)
+            destroyDebugInstance(component)
+
+            static = it
+            val goPosition = component.gameObject.getPosition(Vector3())
+
+            if (static) {
+                cylinderGeom = OdePhysicsUtils.createCylinder(goPosition, radius, length)
+            } else {
+                cylinderGeom = OdePhysicsUtils.createCylinder(goPosition, radius, length, mass)
+                component.body = cylinderGeom.body
+            }
+            component.geom = cylinderGeom
+
+            if (static) {
+                massParentWidgetCell?.rootWidget?.clearWidgets()
+            } else {
+                createMassSpinner(massParentWidgetCell!!.rootWidget, mass) { newMass -> run {
+                    mass = newMass
+                    cylinderGeom.body.mass = MassUtils.createCylinderMass(radius, length, mass)
+                }}
+            }
         }.setAlign(WidgetAlign.LEFT).setPad(0.0f, 0.0f, STATIC_BOTTOM_PAD, 0.0f)
         rootWidget.addRow()
         rootWidget.addLabel("Size:").setAlign(WidgetAlign.LEFT)
         rootWidget.addRow()
         rootWidget.addSpinner("Radius", 0.1f, Float.MAX_VALUE, cylinderGeom.radius.toFloat(), 0.1f) {
-            cylinderGeom.setParams(it.toDouble(), cylinderGeom.length)
+            radius = it.toDouble()
+            cylinderGeom.setParams(radius, length)
             updateDebugInstanceIfNecessary(component, cylinderGeom)
         }.setAlign(WidgetAlign.LEFT).setPad(0.0f, SIZE_RIGHT_PAD, 0.0f, 0.0f)
         rootWidget.addSpinner("Height", 0.1f, Float.MAX_VALUE, cylinderGeom.length.toFloat(), 0.1f) {
-            cylinderGeom.setParams(cylinderGeom.radius, it.toDouble())
+            length = it.toDouble()
+            cylinderGeom.setParams(radius, length)
             updateDebugInstanceIfNecessary(component, cylinderGeom)
         }.setAlign(WidgetAlign.LEFT)
         rootWidget.addEmptyWidget().grow()
+        rootWidget.addRow()
+        massParentWidgetCell = rootWidget.addEmptyWidget()
+        massParentWidgetCell.setAlign(WidgetAlign.LEFT)
+        if (!static) {
+            createMassSpinner(massParentWidgetCell.rootWidget, mass) { newMass -> run {
+                mass = newMass
+                cylinderGeom.body.mass = MassUtils.createCylinderMass(radius, length, mass)
+            }}
+        }
     }
 
     private fun addMeshWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
