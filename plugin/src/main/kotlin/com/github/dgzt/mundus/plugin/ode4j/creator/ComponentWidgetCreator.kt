@@ -12,11 +12,13 @@ import com.github.dgzt.mundus.plugin.ode4j.debug.DebugModelBuilder
 import com.github.dgzt.mundus.plugin.ode4j.physics.ArrayGeomData
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType
 import com.github.dgzt.mundus.plugin.ode4j.util.GameObjectUtils
+import com.github.dgzt.mundus.plugin.ode4j.util.MassUtils
 import com.github.dgzt.mundus.plugin.ode4j.util.MeshUtils
 import com.github.dgzt.mundus.plugin.ode4j.util.OdePhysicsUtils
 import com.github.dgzt.mundus.plugin.ode4j.util.Utils3D
 import com.mbrlabs.mundus.commons.scene3d.components.Component
 import com.mbrlabs.mundus.commons.scene3d.components.ModelComponent
+import com.mbrlabs.mundus.pluginapi.ui.Cell
 import com.mbrlabs.mundus.pluginapi.ui.RootWidget
 import com.mbrlabs.mundus.pluginapi.ui.RootWidgetCell
 import com.mbrlabs.mundus.pluginapi.ui.WidgetAlign
@@ -27,6 +29,8 @@ object ComponentWidgetCreator {
     private const val SIZE_RIGHT_PAD = 10.0f
     private const val VERTEX_WIDGET_TOP_BOTTOM_PAD = 1.0f
     private const val VERTEX_WIDGET_DELETE_BUTTON_LEFT_PAD = 2.0f
+
+    private const val DEFAULT_MASS = 10.0
 
     private val TMP_VECTOR3 = Vector3()
 
@@ -209,6 +213,9 @@ object ComponentWidgetCreator {
 
         var static = component.geom.body == null
 
+        var massParentWidgetCell: RootWidgetCell? = null
+        var mass = if (static) DEFAULT_MASS else boxGeom.body.mass.mass
+
         rootWidget.addCheckbox("Static", static) {
             boxGeom.getLengths(length)
             destroyBody(component)
@@ -221,11 +228,19 @@ object ComponentWidgetCreator {
             if (static) {
                 boxGeom = OdePhysicsUtils.createBox(goPosition, length.get0(), length.get1(), length.get2())
             } else {
-                // TODO set mass from UI
-                boxGeom = OdePhysicsUtils.createBox(goPosition, length.get0(), length.get1(), length.get2(), 10.0)
+                boxGeom = OdePhysicsUtils.createBox(goPosition, length.get0(), length.get1(), length.get2(), mass)
                 component.body = boxGeom.body
             }
             component.geom = boxGeom
+
+            if (static) {
+                massParentWidgetCell?.rootWidget?.clearWidgets()
+            } else {
+                createMassSpinner(massParentWidgetCell!!.rootWidget, mass) { newMass -> run {
+                    mass = newMass
+                    boxGeom.body.mass = MassUtils.createBoxMass(length, mass)
+                }}
+            }
         }.setAlign(WidgetAlign.LEFT).setPad(0.0f, 0.0f, STATIC_BOTTOM_PAD, 0.0f)
         rootWidget.addRow()
         rootWidget.addLabel("Size:").grow().setAlign(WidgetAlign.LEFT)
@@ -245,6 +260,15 @@ object ComponentWidgetCreator {
             boxGeom.lengths = length
             updateDebugInstanceIfNecessary(component, boxGeom)
         }.grow()
+        rootWidget.addRow()
+        massParentWidgetCell = rootWidget.addEmptyWidget()
+        massParentWidgetCell.grow().setAlign(WidgetAlign.LEFT)
+        if (!static) {
+            createMassSpinner(massParentWidgetCell.rootWidget, mass) { newMass -> run {
+                mass = newMass
+                boxGeom.body.mass = MassUtils.createBoxMass(length, mass)
+            }}
+        }
     }
 
     private fun addSphereWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
@@ -441,5 +465,12 @@ object ComponentWidgetCreator {
         debugInstance = DebugModelBuilder.createCylinder(radius.toFloat(), height.toFloat())
         debugInstance.transform.setTranslation(component.gameObject.getPosition(TMP_VECTOR3))
         component.debugInstance = debugInstance
+    }
+
+    private fun createMassSpinner(widget: RootWidget, value: Double, f: (Double) -> Unit): Cell {
+        val result = widget.addSpinner("Mass:", 0.1f, Float.MAX_VALUE, value.toFloat()) { f.invoke(it.toDouble()) }
+        result.grow().setAlign(WidgetAlign.LEFT)
+
+        return result
     }
 }
