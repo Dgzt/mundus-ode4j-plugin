@@ -108,11 +108,7 @@ public class OdePhysicsUtils {
             body = physicsWorld.createBody();
             body.setPosition(goPosition.x, goPosition.y, goPosition.z);
 
-            final DMass massInfo = OdeHelper.createMass();
-            massInfo.setSphere(1.0, geomRadius);
-            massInfo.adjust(mass);
-
-            body.setMass(massInfo);
+            body.setMass(MassUtils.createSphereMass(geomRadius, mass));
             body.setAutoDisableDefaults();
         }
 

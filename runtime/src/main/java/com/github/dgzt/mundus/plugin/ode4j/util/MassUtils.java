@@ -29,6 +29,16 @@ public class MassUtils {
         return massInfo;
     }
 
+    public static DMass createSphereMass(
+        final double radius,
+        final double mass
+    ) {
+        final DMass massInfo = createOrGetMassInfo();
+        massInfo.setSphere(DENSITY, radius);
+        massInfo.adjust(mass);
+        return massInfo;
+    }
+
     private static DMass createOrGetMassInfo() {
         if (MASS_INSTANCE == null) {
             MASS_INSTANCE = OdeHelper.createMass();

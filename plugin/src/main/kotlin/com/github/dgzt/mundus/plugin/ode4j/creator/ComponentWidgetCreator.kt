@@ -273,10 +273,38 @@ object ComponentWidgetCreator {
 
     private fun addSphereWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
         var sphereGeom = component.geom as DSphere
+        var radius = sphereGeom.radius
+
         var static = component.geom.body == null
 
+        var massParentWidgetCell: RootWidgetCell? = null
+        var mass = if (static) DEFAULT_MASS else sphereGeom.body.mass.mass
+
         rootWidget.addCheckbox("Static", static) {
-            // TODO
+            radius = sphereGeom.radius
+            destroyBody(component)
+            destroyGeom(component)
+            destroyDebugInstance(component)
+
+            static = it
+            val goPosition = component.gameObject.getPosition(Vector3())
+
+            if (static) {
+                sphereGeom = OdePhysicsUtils.createSphere(goPosition, radius)
+            } else {
+                sphereGeom = OdePhysicsUtils.createSphere(goPosition, radius, mass)
+                component.body = sphereGeom.body
+            }
+            component.geom = sphereGeom
+
+            if (static) {
+                massParentWidgetCell?.rootWidget?.clearWidgets()
+            } else {
+                createMassSpinner(massParentWidgetCell!!.rootWidget, mass) { newMass -> run {
+                    mass = newMass
+                    sphereGeom.body.mass = MassUtils.createSphereMass(radius, mass)
+                }}
+            }
         }.setAlign(WidgetAlign.LEFT).setPad(0.0f, 0.0f, STATIC_BOTTOM_PAD, 0.0f)
         rootWidget.addRow()
         rootWidget.addLabel("Size:").grow().setAlign(WidgetAlign.LEFT)
@@ -285,6 +313,15 @@ object ComponentWidgetCreator {
             sphereGeom.radius = it.toDouble()
             updateDebugInstanceIfNecessary(component, sphereGeom)
         }.setAlign(WidgetAlign.LEFT)
+        rootWidget.addRow()
+        massParentWidgetCell = rootWidget.addEmptyWidget()
+        massParentWidgetCell.setAlign(WidgetAlign.LEFT)
+        if (!static) {
+            createMassSpinner(massParentWidgetCell.rootWidget, mass) { newMass -> run {
+                mass = newMass
+                sphereGeom.body.mass = MassUtils.createSphereMass(radius, mass)
+            }}
+        }
     }
 
     private fun addCylinderWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
