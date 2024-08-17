@@ -6,6 +6,7 @@ import com.github.antzGames.gdx.ode4j.math.DVector3
 import com.github.antzGames.gdx.ode4j.ode.DBox
 import com.github.antzGames.gdx.ode4j.ode.DCylinder
 import com.github.antzGames.gdx.ode4j.ode.DSphere
+import com.github.antzGames.gdx.ode4j.ode.DTriMesh
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent
 import com.github.dgzt.mundus.plugin.ode4j.debug.DebugModelBuilder
@@ -184,8 +185,6 @@ object ComponentWidgetCreator {
         component: Ode4jPhysicsComponent,
         innerWidgetCell: RootWidgetCell
     ) {
-        val physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld()
-
         component.shapeType = ShapeType.ARRAY
 
         // Init vertices
@@ -198,11 +197,9 @@ object ComponentWidgetCreator {
 
         MeshUtils.generateIndices(geomData.vertices, geomData.indices)
 
+        val goPosition = component.gameObject.getPosition(Vector3())
+        component.geom = OdePhysicsUtils.createTriMesh(goPosition, geomData)
 
-        val triMeshData = physicsWorld.createTriMeshData()
-        Utils3D.fillTriMeshData(geomData.vertices, geomData.indices, triMeshData)
-        component.geom = physicsWorld.createTriMesh(triMeshData)
-        component.geom.data = geomData
         addArrayWidgets(component, innerWidgetCell.rootWidget)
     }
 
@@ -396,12 +393,38 @@ object ComponentWidgetCreator {
     }
 
     private fun addArrayWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
+        var arrayGeom = component.geom as DTriMesh
         var static = component.geom.body == null
 
         val geomData = component.geom.data as ArrayGeomData
 
+        var massParentWidgetCell: RootWidgetCell? = null
+        var mass = if (static) DEFAULT_MASS else arrayGeom.body.mass.mass
+
         rootWidget.addCheckbox("Static", static) {
-            // TODO
+            destroyBody(component)
+            destroyGeom(component)
+            destroyDebugInstance(component)
+
+            static = it
+
+            val goPosition = component.gameObject.getPosition(Vector3())
+
+            if (static) {
+                arrayGeom = OdePhysicsUtils.createTriMesh(goPosition, geomData)
+            } else {
+                arrayGeom = OdePhysicsUtils.createTriMesh(goPosition, geomData, mass)
+            }
+            component.geom = arrayGeom
+
+            if (static) {
+                massParentWidgetCell?.rootWidget?.clearWidgets()
+            } else {
+                createMassSpinner(massParentWidgetCell!!.rootWidget, mass) { newMass -> run {
+                    mass = newMass
+                    arrayGeom.body.mass = MassUtils.createArrayMass(arrayGeom, mass)
+                }}
+            }
         }.setAlign(WidgetAlign.LEFT).setPad(0.0f, 0.0f, STATIC_BOTTOM_PAD, 0.0f)
         rootWidget.addRow()
         val arrayWidgetCell = rootWidget.addEmptyWidget()
@@ -423,6 +446,15 @@ object ComponentWidgetCreator {
             arrayWidget.addRow()
 
             regenerateArrayGeom(component, geomData)
+        }
+        rootWidget.addRow()
+        massParentWidgetCell = rootWidget.addEmptyWidget()
+        massParentWidgetCell.setAlign(WidgetAlign.LEFT)
+        if (!static) {
+            createMassSpinner(massParentWidgetCell.rootWidget, mass) { newMass -> run {
+                mass = newMass
+                arrayGeom.body.mass = MassUtils.createArrayMass(arrayGeom, mass)
+            }}
         }
 
     }
@@ -473,18 +505,22 @@ object ComponentWidgetCreator {
     }
 
     private fun regenerateArrayGeom(component: Ode4jPhysicsComponent, geomData: ArrayGeomData) {
+        var mass = OdePhysicsUtils.INVALID_MASS
+        if (component.body != null) {
+            mass = component.body.mass.mass
+        }
+
         destroyBody(component)
         destroyGeom(component)
         destroyDebugInstance(component)
 
-        val physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld()
-
         MeshUtils.generateIndices(geomData.vertices, geomData.indices)
 
-        val triMeshData = physicsWorld.createTriMeshData()
-        Utils3D.fillTriMeshData(geomData.vertices, geomData.indices, triMeshData)
-        component.geom = physicsWorld.createTriMesh(triMeshData)
-        component.geom.data = geomData
+        val goPosition = component.gameObject.getPosition(Vector3())
+        component.geom = OdePhysicsUtils.createTriMesh(goPosition, geomData, mass)
+        if (component.geom.body != null) {
+            component.body = component.geom.body
+        }
     }
 
     private fun destroyBody(physicsComponent: Ode4jPhysicsComponent) {

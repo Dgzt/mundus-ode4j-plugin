@@ -2,6 +2,7 @@ package com.github.dgzt.mundus.plugin.ode4j.util;
 
 import com.github.antzGames.gdx.ode4j.math.DVector3C;
 import com.github.antzGames.gdx.ode4j.ode.DMass;
+import com.github.antzGames.gdx.ode4j.ode.DTriMesh;
 import com.github.antzGames.gdx.ode4j.ode.OdeHelper;
 
 public class MassUtils {
@@ -47,6 +48,16 @@ public class MassUtils {
     ) {
         final DMass massInfo = createOrGetMassInfo();
         massInfo.setCylinder(DENSITY, CYLINDER_DIRECTION, radius, height);
+        massInfo.adjust(mass);
+        return massInfo;
+    }
+
+    public static DMass createArrayMass(
+        final DTriMesh mesh,
+        final double mass
+    ) {
+        final DMass massInfo = createOrGetMassInfo();
+        massInfo.setTrimesh(DENSITY, mesh);
         massInfo.adjust(mass);
         return massInfo;
     }

@@ -5,7 +5,10 @@ import com.github.antzGames.gdx.ode4j.ode.DBody;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
 import com.github.antzGames.gdx.ode4j.ode.DSphere;
+import com.github.antzGames.gdx.ode4j.ode.DTriMesh;
+import com.github.antzGames.gdx.ode4j.ode.DTriMeshData;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
+import com.github.dgzt.mundus.plugin.ode4j.physics.ArrayGeomData;
 import com.github.dgzt.mundus.plugin.ode4j.physics.PhysicsWorld;
 
 public class OdePhysicsUtils {
@@ -168,6 +171,40 @@ public class OdePhysicsUtils {
         if (isStatic(mass)) {
             geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
         } else {
+            geom.setBody(body);
+        }
+
+        return geom;
+    }
+
+    public static DTriMesh createTriMesh(
+            final Vector3 goPosition,
+            final ArrayGeomData geomData
+    ) {
+        return createTriMesh(goPosition, geomData, INVALID_MASS);
+    }
+
+    public static DTriMesh createTriMesh(
+            final Vector3 goPosition,
+            final ArrayGeomData geomData,
+            final double mass
+    ) {
+        final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
+
+        final DTriMeshData triMeshData = physicsWorld.createTriMeshData();
+        Utils3D.fillTriMeshData(geomData.getVertices(), geomData.getIndices(), triMeshData);
+        final DTriMesh geom = physicsWorld.createTriMesh(triMeshData);
+        geom.setData(geomData);
+
+        if (isStatic(mass)) {
+            geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
+        } else {
+            final DBody body = physicsWorld.createBody();
+            body.setPosition(goPosition.x, goPosition.y, goPosition.z);
+
+            body.setMass(MassUtils.createArrayMass(geom, mass));
+            body.setAutoDisableDefaults();
+
             geom.setBody(body);
         }
 

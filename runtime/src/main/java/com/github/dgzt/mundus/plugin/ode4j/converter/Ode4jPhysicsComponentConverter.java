@@ -79,9 +79,12 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
             final String verticesJson = json.toJson(arrayGeomData.getVertices());
             final String indicesJson = json.toJson(arrayGeomData.getIndices());
 
-            map.put(SaveConstants.ARRAY_STATIC, String.valueOf(true));
             map.put(SaveConstants.ARRAY_VERTICES, verticesJson);
             map.put(SaveConstants.ARRAY_INDICES, indicesJson);
+            if (arrayGeom.getBody() != null) {
+                final double mass = arrayGeom.getBody().getMass().getMass();
+                map.put(SaveConstants.ARRAY_MASS, String.valueOf(mass));
+            }
         }
 
         return map;
@@ -130,7 +133,6 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
                 physicsComponent = Ode4jPhysicsComponentUtils.createMeshComponent(gameObject);
                 break;
             case ARRAY:
-                final boolean arrayStatic = Boolean.parseBoolean(orderedMap.get(SaveConstants.ARRAY_STATIC));
                 final String verticesJson = orderedMap.get(SaveConstants.ARRAY_VERTICES);
                 final String indicesJson = orderedMap.get(SaveConstants.ARRAY_INDICES);
 
@@ -138,7 +140,13 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
                 final Array<Vector3> vertices = json.fromJson(Array.class, verticesJson);
                 final IntArray indices = json.fromJson(IntArray.class, indicesJson);
 
-                physicsComponent = Ode4jPhysicsComponentUtils.createArrayComponent(gameObject, vertices, indices);
+                if (orderedMap.containsKey(SaveConstants.ARRAY_MASS)) {
+                    final double arrayMass = Double.parseDouble(orderedMap.get(SaveConstants.ARRAY_MASS));
+                    physicsComponent = Ode4jPhysicsComponentUtils.createArrayComponent(gameObject, vertices, indices, arrayMass);
+                } else {
+                    physicsComponent = Ode4jPhysicsComponentUtils.createArrayComponent(gameObject, vertices, indices);
+                }
+
                 break;
             default: throw new RuntimeException("Not supported shape type");
         }

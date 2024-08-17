@@ -170,19 +170,31 @@ public class Ode4jPhysicsComponentUtils {
        final Array<Vector3> vertices,
        final IntArray indices
     ) {
-        final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
+        return createArrayComponent(gameObject, vertices, indices, OdePhysicsUtils.INVALID_MASS);
+    }
 
-        final DTriMeshData triMeshData = physicsWorld.createTriMeshData();
-        Utils3D.fillTriMeshData(vertices, indices, triMeshData);
+    public static Ode4jPhysicsComponent createArrayComponent(
+       final GameObject gameObject,
+       final Array<Vector3> vertices,
+       final IntArray indices,
+       final double mass
+    ) {
         final ArrayGeomData geomData = new ArrayGeomData();
         geomData.getVertices().clear();
         geomData.getVertices().addAll(vertices);
         geomData.getIndices().clear();
         geomData.getIndices().addAll(indices);
-        final DTriMesh geom = physicsWorld.createTriMesh(triMeshData);
-        geom.setData(geomData);
 
-        return new Ode4jPhysicsComponent(gameObject, ShapeType.ARRAY, geom);
+        final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
+        final DTriMesh geom = OdePhysicsUtils.createTriMesh(goPosition, geomData, mass);
+
+        final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.ARRAY, geom);
+
+        if (0 <= mass) {
+            physicsComponent.setBody(geom.getBody());
+        }
+
+        return physicsComponent;
     }
 
     public static double heightfieldCallback(

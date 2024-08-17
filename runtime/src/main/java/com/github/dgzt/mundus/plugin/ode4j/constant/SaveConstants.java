@@ -20,7 +20,7 @@ public class SaveConstants {
     public static final String CYLINDER_MASS = "cylinder-mass"; // Optional field. If this field is not specified then this is a static cylinder shape
 
     // Array
-    public static final String ARRAY_STATIC = "array-static";
-    public static final String ARRAY_VERTICES = "array-vertices";
-    public static final String ARRAY_INDICES = "array-indices";
+    public static final String ARRAY_VERTICES = "array-vertices"; // Mandatory field
+    public static final String ARRAY_INDICES = "array-indices"; // Mandatory field
+    public static final String ARRAY_MASS = "array-mass"; // Optional field. If this field is not specified then this is a static array shape
 }
