@@ -1,5 +1,6 @@
 package com.github.dgzt.mundus.plugin.ode4j.util;
 
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
@@ -28,6 +29,7 @@ public class Ode4jPhysicsComponentUtils {
 
     private static final Vector3 TMP_SCALE = new Vector3();
     private static final Vector3 TMP_POSITION = new Vector3();
+    private static final Quaternion TMP_QUATERNION = new Quaternion();
     private static final Vector3 TMP_VERTEX_POSITION = new Vector3();
 
     public static Ode4jPhysicsComponent createTerrainPhysicsComponent(final GameObject gameObject) {
@@ -93,7 +95,8 @@ public class Ode4jPhysicsComponentUtils {
             final double mass
     ) {
         final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
-        final DBox geom = OdePhysicsUtils.createBox(goPosition, geomWidth, geomHeight, geomDepth, mass);
+        final Quaternion goQuaternion = gameObject.getRotation(TMP_QUATERNION);
+        final DBox geom = OdePhysicsUtils.createBox(goPosition, goQuaternion, geomWidth, geomHeight, geomDepth, mass);
 
         final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.BOX, geom);
         if (0 <= mass) {
@@ -116,7 +119,8 @@ public class Ode4jPhysicsComponentUtils {
         final double mass
     ) {
         final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
-        final DSphere geom = OdePhysicsUtils.createSphere(goPosition, geomRadius, mass);
+        final Quaternion goQuaternion = gameObject.getRotation(TMP_QUATERNION);
+        final DSphere geom = OdePhysicsUtils.createSphere(goPosition, goQuaternion, geomRadius, mass);
 
         final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.SPHERE, geom);
         if (0 <= mass) {
@@ -141,8 +145,9 @@ public class Ode4jPhysicsComponentUtils {
             final double mass
     ) {
         final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
+        final Quaternion goQuaternion = gameObject.getRotation(TMP_QUATERNION);
 
-        final DCylinder geom = OdePhysicsUtils.createCylinder(goPosition, geomRadius, geomHeight, mass);
+        final DCylinder geom = OdePhysicsUtils.createCylinder(goPosition, goQuaternion, geomRadius, geomHeight, mass);
 
         final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.CYLINDER, geom);
         if (0 <= mass) {
@@ -186,7 +191,8 @@ public class Ode4jPhysicsComponentUtils {
         geomData.getIndices().addAll(indices);
 
         final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
-        final DTriMesh geom = OdePhysicsUtils.createTriMesh(goPosition, geomData, mass);
+        final Quaternion goQuaternion = gameObject.getRotation(TMP_QUATERNION);
+        final DTriMesh geom = OdePhysicsUtils.createTriMesh(goPosition, goQuaternion, geomData, mass);
 
         final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.ARRAY, geom);
 

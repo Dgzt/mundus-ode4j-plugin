@@ -68,14 +68,17 @@ public class DebugRenderer {
                         final DBox boxGeom = (DBox) physicsComponent.getGeom();
                         final DVector3C lengths = boxGeom.getLengths();
                         debugInstance = DebugModelBuilder.createBox((float) lengths.get0(), (float) lengths.get1(), (float) lengths.get2());
+                        debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(boxGeom.getQuaternion()));
                         debugInstance.transform.setTranslation(gameObject.getPosition(TMP_VECTOR3));
                     } else if (ShapeType.SPHERE == physicsComponent.getShapeType()) {
                         final DSphere sphereGeom = (DSphere) physicsComponent.getGeom();
                         debugInstance = DebugModelBuilder.createSphere((float) sphereGeom.getRadius());
+                        debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(sphereGeom.getQuaternion()));
                         debugInstance.transform.setTranslation(gameObject.getPosition(TMP_VECTOR3));
                     } else if (ShapeType.CYLINDER == physicsComponent.getShapeType()) {
                         final DCylinder cylinderGeom = (DCylinder) physicsComponent.getGeom();
                         debugInstance = DebugModelBuilder.createCylinder((float) cylinderGeom.getRadius(), (float) cylinderGeom.getLength());
+                        debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(cylinderGeom.getQuaternion()));
                         debugInstance.transform.setTranslation(gameObject.getPosition(TMP_VECTOR3));
                     } else if (ShapeType.MESH == physicsComponent.getShapeType()) {
                         final ModelComponent modelComponent = gameObject.findComponentByType(Component.Type.MODEL);
@@ -83,10 +86,12 @@ public class DebugRenderer {
                         debugInstance = DebugModelBuilder.createLineMesh(modelInstance);
                         debugInstance.transform.mulLeft(physicsComponent.gameObject.getTransform());
                     } else if (ShapeType.ARRAY == physicsComponent.getShapeType()) {
-                        final ArrayGeomData arrayGeomData = (ArrayGeomData) physicsComponent.getGeom().getData();
+                        final DGeom arrayGeom = physicsComponent.getGeom();
+                        final ArrayGeomData arrayGeomData = (ArrayGeomData) arrayGeom.getData();
                         final IntArray indices = arrayGeomData.getIndices();
                         if (indices.notEmpty()) {
                             debugInstance = DebugModelBuilder.createLineMesh(arrayGeomData.getVertices(), indices);
+                            debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(arrayGeom.getQuaternion()));
                             debugInstance.transform.setTranslation(gameObject.getPosition(TMP_VECTOR3));
                         }
                     }

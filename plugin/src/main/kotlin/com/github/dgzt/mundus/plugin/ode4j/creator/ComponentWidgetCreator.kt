@@ -1,5 +1,6 @@
 package com.github.dgzt.mundus.plugin.ode4j.creator
 
+import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
 import com.github.antzGames.gdx.ode4j.math.DVector3
@@ -106,19 +107,17 @@ object ComponentWidgetCreator {
         modelComponent: ModelComponent,
         innerWidgetCell: RootWidgetCell
     ) {
-        val physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld()
-
         component.shapeType = ShapeType.BOX
 
         // Create static box geom
         val goScale = modelComponent.gameObject.getScale(Vector3())
         val goPosition = modelComponent.gameObject.getPosition(Vector3())
+        val goQuaternion = modelComponent.gameObject.getRotation(Quaternion())
         val boundingBox = modelComponent.orientedBoundingBox.bounds
         val geomWidth = boundingBox.width * goScale.x
         val geomHeight = boundingBox.height * goScale.y
         val geomDepth = boundingBox.depth * goScale.z
-        component.geom = physicsWorld.createBox(geomWidth.toDouble(), geomHeight.toDouble(), geomDepth.toDouble())
-        component.geom.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
+        component.geom = OdePhysicsUtils.createBox(goPosition, goQuaternion, geomWidth.toDouble(), geomHeight.toDouble(), geomDepth.toDouble())
 
         addBoxWidgets(component, innerWidgetCell.rootWidget)
     }
@@ -128,17 +127,15 @@ object ComponentWidgetCreator {
         modelComponent: ModelComponent,
         innerWidgetCell: RootWidgetCell
     ) {
-        val physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld()
-
         component.shapeType = ShapeType.SPHERE
 
         // Create static sphere box geom
         val goScale = modelComponent.gameObject.getScale(Vector3())
         val goPosition = modelComponent.gameObject.getPosition(Vector3())
+        val goRotation = modelComponent.gameObject.getRotation(Quaternion())
         val boundingBox = modelComponent.orientedBoundingBox.bounds
         val geomRadius = Math.max(Math.max(boundingBox.width * goScale.x, boundingBox.depth * goScale.z), boundingBox.height * goScale.y) / 2.0
-        component.geom = physicsWorld.createSphere(geomRadius)
-        component.geom.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
+        component.geom = OdePhysicsUtils.createSphere(goPosition, goRotation, geomRadius)
 
         addSphereWidgets(component, innerWidgetCell.rootWidget)
     }
@@ -148,18 +145,16 @@ object ComponentWidgetCreator {
         modelComponent: ModelComponent,
         innerWidgetCell: RootWidgetCell
     ) {
-        val physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld()
-
         component.shapeType = ShapeType.CYLINDER
 
         // Create static cylinder geom
         val goScale = modelComponent.gameObject.getScale(Vector3())
         val goPosition = modelComponent.gameObject.getPosition(Vector3())
+        val goRotation = modelComponent.gameObject.getRotation(Quaternion())
         val boundingBox = modelComponent.orientedBoundingBox.bounds
         val radius = Math.max(boundingBox.width * goScale.x, boundingBox.depth * goScale.z) / 2.0
         val height = boundingBox.height * goScale.y
-        component.geom = physicsWorld.createCylinder(radius, height.toDouble())
-        component.geom.setPosition(goPosition.x.toDouble(), goPosition.y.toDouble(), goPosition.z.toDouble())
+        component.geom = OdePhysicsUtils.createCylinder(goPosition, goRotation, radius, height.toDouble())
 
         addCylinderWidgets(component, innerWidgetCell.rootWidget)
     }
@@ -198,7 +193,8 @@ object ComponentWidgetCreator {
         MeshUtils.generateIndices(geomData.vertices, geomData.indices)
 
         val goPosition = component.gameObject.getPosition(Vector3())
-        component.geom = OdePhysicsUtils.createTriMesh(goPosition, geomData)
+        val goRotation = component.gameObject.getRotation(Quaternion())
+        component.geom = OdePhysicsUtils.createTriMesh(goPosition, goRotation, geomData)
 
         addArrayWidgets(component, innerWidgetCell.rootWidget)
     }
@@ -221,11 +217,12 @@ object ComponentWidgetCreator {
 
             static = it
             val goPosition = component.gameObject.getPosition(Vector3())
+            val goRotation = component.gameObject.getRotation(Quaternion())
 
             if (static) {
-                boxGeom = OdePhysicsUtils.createBox(goPosition, length.get0(), length.get1(), length.get2())
+                boxGeom = OdePhysicsUtils.createBox(goPosition, goRotation, length.get0(), length.get1(), length.get2())
             } else {
-                boxGeom = OdePhysicsUtils.createBox(goPosition, length.get0(), length.get1(), length.get2(), mass)
+                boxGeom = OdePhysicsUtils.createBox(goPosition, goRotation, length.get0(), length.get1(), length.get2(), mass)
                 component.body = boxGeom.body
             }
             component.geom = boxGeom
@@ -285,11 +282,12 @@ object ComponentWidgetCreator {
 
             static = it
             val goPosition = component.gameObject.getPosition(Vector3())
+            val goRotation = component.gameObject.getRotation(Quaternion())
 
             if (static) {
-                sphereGeom = OdePhysicsUtils.createSphere(goPosition, radius)
+                sphereGeom = OdePhysicsUtils.createSphere(goPosition, goRotation, radius)
             } else {
-                sphereGeom = OdePhysicsUtils.createSphere(goPosition, radius, mass)
+                sphereGeom = OdePhysicsUtils.createSphere(goPosition, goRotation, radius, mass)
                 component.body = sphereGeom.body
             }
             component.geom = sphereGeom
@@ -340,11 +338,12 @@ object ComponentWidgetCreator {
 
             static = it
             val goPosition = component.gameObject.getPosition(Vector3())
+            val goRotation = component.gameObject.getRotation(Quaternion())
 
             if (static) {
-                cylinderGeom = OdePhysicsUtils.createCylinder(goPosition, radius, length)
+                cylinderGeom = OdePhysicsUtils.createCylinder(goPosition, goRotation, radius, length)
             } else {
-                cylinderGeom = OdePhysicsUtils.createCylinder(goPosition, radius, length, mass)
+                cylinderGeom = OdePhysicsUtils.createCylinder(goPosition, goRotation, radius, length, mass)
                 component.body = cylinderGeom.body
             }
             component.geom = cylinderGeom
@@ -409,11 +408,12 @@ object ComponentWidgetCreator {
             static = it
 
             val goPosition = component.gameObject.getPosition(Vector3())
+            val goRotation = component.gameObject.getRotation(Quaternion())
 
             if (static) {
-                arrayGeom = OdePhysicsUtils.createTriMesh(goPosition, geomData)
+                arrayGeom = OdePhysicsUtils.createTriMesh(goPosition, goRotation, geomData)
             } else {
-                arrayGeom = OdePhysicsUtils.createTriMesh(goPosition, geomData, mass)
+                arrayGeom = OdePhysicsUtils.createTriMesh(goPosition, goRotation, geomData, mass)
             }
             component.geom = arrayGeom
 
@@ -517,7 +517,8 @@ object ComponentWidgetCreator {
         MeshUtils.generateIndices(geomData.vertices, geomData.indices)
 
         val goPosition = component.gameObject.getPosition(Vector3())
-        component.geom = OdePhysicsUtils.createTriMesh(goPosition, geomData, mass)
+        val goRotation = component.gameObject.getRotation(Quaternion())
+        component.geom = OdePhysicsUtils.createTriMesh(goPosition, goRotation, geomData, mass)
         if (component.geom.body != null) {
             component.body = component.geom.body
         }
