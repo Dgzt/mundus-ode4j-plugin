@@ -488,9 +488,11 @@ object ComponentWidgetCreator {
             }
         }.grow().setPad(VERTEX_WIDGET_TOP_BOTTOM_PAD, 0.0f, VERTEX_WIDGET_TOP_BOTTOM_PAD, 0.0f)
         vertexWidget.addTextButton("X") {
-            vertexWidgetCell.delete()
-            geomData.vertices.removeValue(vertexData, true)
-            regenerateArrayGeom(component, geomData)
+            if (3 < geomData.vertices.size) {
+                vertexWidgetCell.delete()
+                geomData.vertices.removeValue(vertexData, true)
+                regenerateArrayGeom(component, geomData)
+            }
         }.setPad(0.0f, 0.0f, 0.0f, VERTEX_WIDGET_DELETE_BUTTON_LEFT_PAD)
     }
 
