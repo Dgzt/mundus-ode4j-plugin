@@ -1,15 +1,14 @@
 package com.github.dgzt.mundus.plugin.ode4j.util;
 
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
-import com.github.antzGames.gdx.ode4j.ode.DBody;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
 import com.github.antzGames.gdx.ode4j.ode.DHeightfield;
 import com.github.antzGames.gdx.ode4j.ode.DHeightfieldData;
-import com.github.antzGames.gdx.ode4j.ode.DMass;
 import com.github.antzGames.gdx.ode4j.ode.DSphere;
 import com.github.antzGames.gdx.ode4j.ode.DTriMesh;
 import com.github.antzGames.gdx.ode4j.ode.DTriMeshData;
@@ -30,6 +29,7 @@ public class Ode4jPhysicsComponentUtils {
 
     private static final Vector3 TMP_SCALE = new Vector3();
     private static final Vector3 TMP_POSITION = new Vector3();
+    private static final Quaternion TMP_QUATERNION = new Quaternion();
     private static final Vector3 TMP_VERTEX_POSITION = new Vector3();
 
     public static Ode4jPhysicsComponent createTerrainPhysicsComponent(final GameObject gameObject) {
@@ -63,8 +63,14 @@ public class Ode4jPhysicsComponentUtils {
     }
 
     public static Ode4jPhysicsComponent createBoxPhysicsComponent(
+            final GameObject gameObject
+    ) {
+        return createBoxPhysicsComponent(gameObject, OdePhysicsUtils.INVALID_MASS);
+    }
+
+    public static Ode4jPhysicsComponent createBoxPhysicsComponent(
             final GameObject gameObject,
-            final boolean isStatic
+            final double mass
     ) {
         final Vector3 goScale = gameObject.getScale(TMP_SCALE);
         final ModelComponent modelComponent = gameObject.findComponentByType(Component.Type.MODEL);
@@ -73,44 +79,32 @@ public class Ode4jPhysicsComponentUtils {
         final double geomHeight = bounds.getHeight() * goScale.y;
         final double geomDepth = bounds.getDepth() * goScale.z;
 
-        return createBoxPhysicsComponent(gameObject, isStatic, geomWidth, geomHeight, geomDepth);
+        return createBoxPhysicsComponent(gameObject, geomWidth, geomHeight, geomDepth, mass);
     }
 
     public static Ode4jPhysicsComponent createBoxPhysicsComponent(
             final GameObject gameObject,
-            final boolean isStatic,
             final double geomWidth,
             final double geomHeight,
             final double geomDepth
     ) {
-        final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
+        return createBoxPhysicsComponent(gameObject, geomWidth, geomHeight, geomDepth, OdePhysicsUtils.INVALID_MASS);
+    }
+
+    public static Ode4jPhysicsComponent createBoxPhysicsComponent(
+            final GameObject gameObject,
+            final double geomWidth,
+            final double geomHeight,
+            final double geomDepth,
+            final double mass
+    ) {
         final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
-
-        final DBody body;
-        if (isStatic) {
-            body = null;
-        } else {
-            body = physicsWorld.createBody();
-            body.setPosition(goPosition.x, goPosition.y, goPosition.z);
-
-            final DMass massInfo = OdeHelper.createMass();
-            massInfo.setBox(1.0, geomWidth, geomHeight, geomDepth);
-            massInfo.adjust(10.0);
-
-            body.setMass(massInfo);
-            body.setAutoDisableDefaults();
-        }
-
-        final DBox geom = physicsWorld.createBox(geomWidth, geomHeight, geomDepth);
-        if (isStatic) {
-            geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
-        } else {
-            geom.setBody(body);
-        }
+        final Quaternion goQuaternion = gameObject.getRotation(TMP_QUATERNION);
+        final DBox geom = OdePhysicsUtils.createBox(goPosition, goQuaternion, geomWidth, geomHeight, geomDepth, mass);
 
         final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.BOX, geom);
-        if (!isStatic) {
-            physicsComponent.setBody(body);
+        if (0 <= mass) {
+            physicsComponent.setBody(geom.getBody());
         }
 
         return physicsComponent;
@@ -118,37 +112,23 @@ public class Ode4jPhysicsComponentUtils {
 
     public static Ode4jPhysicsComponent createSpherePhysicsComponent(
         final GameObject gameObject,
-        final boolean isStatic,
         final double geomRadius
     ) {
-        final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
+        return createSpherePhysicsComponent(gameObject, geomRadius, OdePhysicsUtils.INVALID_MASS);
+    }
+
+    public static Ode4jPhysicsComponent createSpherePhysicsComponent(
+        final GameObject gameObject,
+        final double geomRadius,
+        final double mass
+    ) {
         final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
-
-        final DBody body;
-        if (isStatic) {
-            body = null;
-        } else {
-            body = physicsWorld.createBody();
-            body.setPosition(goPosition.x, goPosition.y, goPosition.z);
-
-            final DMass massInfo = OdeHelper.createMass();
-            massInfo.setSphere(1.0, geomRadius);
-            massInfo.adjust(10.0);
-
-            body.setMass(massInfo);
-            body.setAutoDisableDefaults();
-        }
-
-        final DSphere geom = physicsWorld.createSphere(geomRadius);
-        if (isStatic) {
-            geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
-        } else {
-            geom.setBody(body);
-        }
+        final Quaternion goQuaternion = gameObject.getRotation(TMP_QUATERNION);
+        final DSphere geom = OdePhysicsUtils.createSphere(goPosition, goQuaternion, geomRadius, mass);
 
         final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.SPHERE, geom);
-        if (!isStatic) {
-            physicsComponent.setBody(body);
+        if (0 <= mass) {
+            physicsComponent.setBody(geom.getBody());
         }
 
         return physicsComponent;
@@ -156,38 +136,26 @@ public class Ode4jPhysicsComponentUtils {
 
     public static Ode4jPhysicsComponent createCylinderPhysicsComponent(
             final GameObject gameObject,
-            final boolean isStatic,
             final double geomRadius,
             final double geomHeight
     ) {
-        final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
+        return createCylinderPhysicsComponent(gameObject, geomRadius, geomHeight, OdePhysicsUtils.INVALID_MASS);
+    }
+
+    public static Ode4jPhysicsComponent createCylinderPhysicsComponent(
+            final GameObject gameObject,
+            final double geomRadius,
+            final double geomHeight,
+            final double mass
+    ) {
         final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
+        final Quaternion goQuaternion = gameObject.getRotation(TMP_QUATERNION);
 
-        final DBody body;
-        if (isStatic) {
-            body = null;
-        } else {
-            body = physicsWorld.createBody();
-            body.setPosition(goPosition.x, goPosition.y, goPosition.z);
-
-            final DMass massInfo = OdeHelper.createMass();
-            massInfo.setCylinder(1.0, 2, geomRadius, geomHeight);
-            massInfo.adjust(10.0);
-
-            body.setMass(massInfo);
-            body.setAutoDisableDefaults();
-        }
-
-        final DCylinder geom = physicsWorld.createCylinder(geomRadius, geomHeight);
-        if (isStatic) {
-            geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
-        } else {
-            geom.setBody(body);
-        }
+        final DCylinder geom = OdePhysicsUtils.createCylinder(goPosition, goQuaternion, geomRadius, geomHeight, mass);
 
         final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.CYLINDER, geom);
-        if (!isStatic) {
-            physicsComponent.setBody(body);
+        if (0 <= mass) {
+            physicsComponent.setBody(geom.getBody());
         }
 
         return physicsComponent;
@@ -211,19 +179,32 @@ public class Ode4jPhysicsComponentUtils {
        final Array<Vector3> vertices,
        final IntArray indices
     ) {
-        final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
+        return createArrayComponent(gameObject, vertices, indices, OdePhysicsUtils.INVALID_MASS);
+    }
 
-        final DTriMeshData triMeshData = physicsWorld.createTriMeshData();
-        Utils3D.fillTriMeshData(vertices, indices, triMeshData);
+    public static Ode4jPhysicsComponent createArrayComponent(
+       final GameObject gameObject,
+       final Array<Vector3> vertices,
+       final IntArray indices,
+       final double mass
+    ) {
         final ArrayGeomData geomData = new ArrayGeomData();
         geomData.getVertices().clear();
         geomData.getVertices().addAll(vertices);
         geomData.getIndices().clear();
         geomData.getIndices().addAll(indices);
-        final DTriMesh geom = physicsWorld.createTriMesh(triMeshData);
-        geom.setData(geomData);
 
-        return new Ode4jPhysicsComponent(gameObject, ShapeType.ARRAY, geom);
+        final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
+        final Quaternion goQuaternion = gameObject.getRotation(TMP_QUATERNION);
+        final DTriMesh geom = OdePhysicsUtils.createTriMesh(goPosition, goQuaternion, geomData, mass);
+
+        final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.ARRAY, geom);
+
+        if (0 <= mass) {
+            physicsComponent.setBody(geom.getBody());
+        }
+
+        return physicsComponent;
     }
 
     public static double heightfieldCallback(
