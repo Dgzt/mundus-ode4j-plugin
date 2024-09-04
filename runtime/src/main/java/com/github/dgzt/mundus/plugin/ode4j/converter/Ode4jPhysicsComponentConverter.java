@@ -76,8 +76,8 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
             final ArrayGeomData arrayGeomData = (ArrayGeomData) arrayGeom.getData();
 
             Json json = new Json(JsonWriter.OutputType.json);
-            final String verticesJson = json.toJson(arrayGeomData.getVertices());
-            final String indicesJson = json.toJson(arrayGeomData.getIndices());
+            final String verticesJson = json.toJson(arrayGeomData.getVertices(), Array.class, Vector3.class);
+            final String indicesJson = json.toJson(arrayGeomData.getIndices(), IntArray.class);
 
             map.put(SaveConstants.ARRAY_VERTICES, verticesJson);
             map.put(SaveConstants.ARRAY_INDICES, indicesJson);
@@ -137,7 +137,7 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
                 final String indicesJson = orderedMap.get(SaveConstants.ARRAY_INDICES);
 
                 final Json json = new Json(JsonWriter.OutputType.json);
-                final Array<Vector3> vertices = json.fromJson(Array.class, verticesJson);
+                final Array<Vector3> vertices = json.fromJson(Array.class, Vector3.class, verticesJson);
                 final IntArray indices = json.fromJson(IntArray.class, indicesJson);
 
                 if (orderedMap.containsKey(SaveConstants.ARRAY_MASS)) {
