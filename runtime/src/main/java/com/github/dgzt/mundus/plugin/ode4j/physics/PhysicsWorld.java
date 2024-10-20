@@ -1,7 +1,9 @@
 package com.github.dgzt.mundus.plugin.ode4j.physics;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.github.antzGames.gdx.ode4j.math.DVector4;
 import com.github.antzGames.gdx.ode4j.ode.DBody;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
@@ -9,6 +11,7 @@ import com.github.antzGames.gdx.ode4j.ode.DHeightfieldData;
 import com.github.antzGames.gdx.ode4j.ode.DHinge2Joint;
 import com.github.antzGames.gdx.ode4j.ode.DJointGroup;
 import com.github.antzGames.gdx.ode4j.ode.DPlane;
+import com.github.antzGames.gdx.ode4j.ode.DRay;
 import com.github.antzGames.gdx.ode4j.ode.DSapSpace;
 import com.github.antzGames.gdx.ode4j.ode.DSpace;
 import com.github.antzGames.gdx.ode4j.ode.DSphere;
@@ -27,6 +30,7 @@ public class PhysicsWorld implements Disposable {
     private final DJointGroup contactGroup;
     private final AbstractNearCallback nearCallback;
     private final UpdateCallback updateCallback;
+    private RaycastNearCallback raycastNearCallback = null;
     private final double step;
     private final Array<AbstractOde4jPhysicsComponent> physicsComponents;
 
@@ -88,6 +92,10 @@ public class PhysicsWorld implements Disposable {
         return OdeHelper.createCylinder(space, radius, height);
     }
 
+    public DRay createRay(final double length) {
+        return OdeHelper.createRay(space, length);
+    }
+
     public DBody createBody() {
         return OdeHelper.createBody(world);
     }
@@ -108,12 +116,26 @@ public class PhysicsWorld implements Disposable {
         updateCallback.update(physicsComponents);
     }
 
+    public RaycastResult raycast(final DRay ray) {
+        final RaycastResult raycastResult = new RaycastResult();
+        space.collide2(ray, raycastResult, getOrCreateRaycastNearCallback());
+        return raycastResult;
+    }
+
     @Override
     public void dispose() {
         contactGroup.destroy();
         space.destroy();
         world.destroy();
         OdeHelper.closeODE();
+    }
+
+    private RaycastNearCallback getOrCreateRaycastNearCallback() {
+        if (raycastNearCallback == null) {
+            raycastNearCallback = new RaycastNearCallback();
+        }
+
+        return raycastNearCallback;
     }
 
     public Array<AbstractOde4jPhysicsComponent> getPhysicsComponents() {
