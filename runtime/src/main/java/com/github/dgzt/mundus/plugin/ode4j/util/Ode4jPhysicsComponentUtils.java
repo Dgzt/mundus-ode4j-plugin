@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
+import com.github.antzGames.gdx.ode4j.ode.DCapsule;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
 import com.github.antzGames.gdx.ode4j.ode.DHeightfield;
 import com.github.antzGames.gdx.ode4j.ode.DHeightfieldData;
@@ -150,6 +151,33 @@ public class Ode4jPhysicsComponentUtils {
         final DCylinder geom = OdePhysicsUtils.createCylinder(goPosition, goQuaternion, geomRadius, geomHeight, mass);
 
         final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.CYLINDER, geom);
+        if (0 <= mass) {
+            physicsComponent.setBody(geom.getBody());
+        }
+
+        return physicsComponent;
+    }
+
+    public static Ode4jPhysicsComponent createCapsulePhysicsComponent(
+        final GameObject gameObject,
+        final double geomRadius,
+        final double geomLength
+    ) {
+        return createCapsulePhysicsComponent(gameObject, geomRadius, geomLength, OdePhysicsUtils.INVALID_MASS);
+    }
+
+    public static Ode4jPhysicsComponent createCapsulePhysicsComponent(
+        final GameObject gameObject,
+        final double geomRadius,
+        final double geomLength,
+        final double mass
+    ) {
+        final Vector3 goPosition = gameObject.getPosition(TMP_POSITION);
+        final Quaternion goQuaternion = gameObject.getRotation(TMP_QUATERNION);
+
+        final DCapsule geom = OdePhysicsUtils.createCapsule(goPosition, goQuaternion, geomRadius, geomLength, mass);
+
+        final Ode4jPhysicsComponent physicsComponent = new Ode4jPhysicsComponent(gameObject, ShapeType.CAPSULE, geom);
         if (0 <= mass) {
             physicsComponent.setBody(geom.getBody());
         }

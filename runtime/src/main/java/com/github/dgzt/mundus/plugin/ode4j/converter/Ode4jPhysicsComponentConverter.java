@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.github.antzGames.gdx.ode4j.math.DVector3C;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
+import com.github.antzGames.gdx.ode4j.ode.DCapsule;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
 import com.github.antzGames.gdx.ode4j.ode.DGeom;
 import com.github.antzGames.gdx.ode4j.ode.DSphere;
@@ -69,6 +70,17 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
                 final double mass = cylinderGeom.getBody().getMass().getMass();
                 map.put(SaveConstants.CYLINDER_MASS, String.valueOf(mass));
             }
+        } else if (ShapeType.CAPSULE == ode4jComponent.getShapeType()) {
+            final DCapsule capsuleGeom = (DCapsule) ode4jComponent.getGeom();
+            final double radius = capsuleGeom.getRadius();
+            final double height = capsuleGeom.getLength();
+
+            map.put(SaveConstants.CAPSULE_RADIUS, String.valueOf(radius));
+            map.put(SaveConstants.CAPSULE_HEIGHT, String.valueOf(height));
+            if (capsuleGeom.getBody() != null) {
+                final double mass = capsuleGeom.getBody().getMass().getMass();
+                map.put(SaveConstants.CAPSULE_MASS, String.valueOf(mass));
+            }
         } else if (ShapeType.MESH == ode4jComponent.getShapeType()) {
             // NOOP
         } else if (ShapeType.ARRAY == ode4jComponent.getShapeType()) {
@@ -127,6 +139,16 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
                     physicsComponent = Ode4jPhysicsComponentUtils.createCylinderPhysicsComponent(gameObject, cylinderRadius, cylinderHeight, cylinderMass);
                 } else {
                     physicsComponent = Ode4jPhysicsComponentUtils.createCylinderPhysicsComponent(gameObject, cylinderRadius, cylinderHeight);
+                }
+                break;
+            case CAPSULE:
+                final double capsuleRadius = Double.parseDouble(orderedMap.get(SaveConstants.CAPSULE_RADIUS));
+                final double capsuleLength = Double.parseDouble(orderedMap.get(SaveConstants.CAPSULE_HEIGHT));
+                if (orderedMap.containsKey(SaveConstants.CAPSULE_MASS)) {
+                    final double capsuleMass = Double.parseDouble(orderedMap.get(SaveConstants.CAPSULE_MASS));
+                    physicsComponent = Ode4jPhysicsComponentUtils.createCapsulePhysicsComponent(gameObject, capsuleRadius, capsuleLength, capsuleMass);
+                } else {
+                    physicsComponent = Ode4jPhysicsComponentUtils.createCapsulePhysicsComponent(gameObject, capsuleRadius, capsuleRadius);
                 }
                 break;
             case MESH:

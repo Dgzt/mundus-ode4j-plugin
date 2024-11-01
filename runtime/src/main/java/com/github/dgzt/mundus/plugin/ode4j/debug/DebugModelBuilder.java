@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.CapsuleShapeBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.CylinderShapeBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.SphereShapeBuilder;
 import com.badlogic.gdx.math.Vector3;
@@ -130,6 +131,25 @@ public class DebugModelBuilder {
                 new Material(ColorAttribute.createDiffuse(Color.WHITE)));
         final float diameter = radius * 2;
         CylinderShapeBuilder.build(meshPartBuilder, diameter, height, diameter, 12);
+        final Model model = modelBuilder.end();
+
+        rotateMesh(model);
+
+        return new ModelInstance(model);
+    }
+
+    public static ModelInstance createCapsule(
+        final float radius,
+        final float height
+    ) {
+        final ModelBuilder modelBuilder = new ModelBuilder();
+        modelBuilder.begin();
+        final MeshPartBuilder meshPartBuilder = modelBuilder.part(
+                "part",
+                GL30.GL_LINES,
+                VertexAttributes.Usage.Position,
+                new Material(ColorAttribute.createDiffuse(Color.WHITE)));
+        CapsuleShapeBuilder.build(meshPartBuilder, radius, height, 12);
         final Model model = modelBuilder.end();
 
         rotateMesh(model);

@@ -9,6 +9,7 @@ public class MassUtils {
 
     private static final double DENSITY = 1.0;
     private static final int CYLINDER_DIRECTION = 2; // 2 = Y
+    private static final int CAPSULE_DIRECTION = 2; // 2 = Y
 
     private static DMass MASS_INSTANCE = null;
 
@@ -48,6 +49,17 @@ public class MassUtils {
     ) {
         final DMass massInfo = createOrGetMassInfo();
         massInfo.setCylinder(DENSITY, CYLINDER_DIRECTION, radius, height);
+        massInfo.adjust(mass);
+        return massInfo;
+    }
+
+    public static DMass createCapsuleMass(
+        final double radius,
+        final double length,
+        final double mass
+    ) {
+        final DMass massInfo = createOrGetMassInfo();
+        massInfo.setCapsule(DENSITY, CAPSULE_DIRECTION, radius, length);
         massInfo.adjust(mass);
         return massInfo;
     }

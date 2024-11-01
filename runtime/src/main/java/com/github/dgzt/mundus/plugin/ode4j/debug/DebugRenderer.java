@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.IntArray;
 import com.github.antzGames.gdx.ode4j.Ode2GdxMathUtils;
 import com.github.antzGames.gdx.ode4j.math.DVector3C;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
+import com.github.antzGames.gdx.ode4j.ode.DCapsule;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
 import com.github.antzGames.gdx.ode4j.ode.DGeom;
 import com.github.antzGames.gdx.ode4j.ode.DSphere;
@@ -79,6 +80,11 @@ public class DebugRenderer {
                         final DCylinder cylinderGeom = (DCylinder) physicsComponent.getGeom();
                         debugInstance = DebugModelBuilder.createCylinder((float) cylinderGeom.getRadius(), (float) cylinderGeom.getLength());
                         debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(cylinderGeom.getQuaternion()));
+                        debugInstance.transform.setTranslation(gameObject.getPosition(TMP_VECTOR3));
+                    } else if (ShapeType.CAPSULE == physicsComponent.getShapeType()) {
+                        final DCapsule capsuleGeom = (DCapsule) physicsComponent.getGeom();
+                        debugInstance = DebugModelBuilder.createCapsule((float) capsuleGeom.getRadius(), (float) capsuleGeom.getLength());
+                        debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(capsuleGeom.getQuaternion()));
                         debugInstance.transform.setTranslation(gameObject.getPosition(TMP_VECTOR3));
                     } else if (ShapeType.MESH == physicsComponent.getShapeType()) {
                         final ModelComponent modelComponent = gameObject.findComponentByType(Component.Type.MODEL);

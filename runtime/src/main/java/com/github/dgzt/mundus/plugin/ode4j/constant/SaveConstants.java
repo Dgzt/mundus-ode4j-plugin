@@ -19,6 +19,11 @@ public class SaveConstants {
     public static final String CYLINDER_HEIGHT = "cylinder-height"; // Mandatory field
     public static final String CYLINDER_MASS = "cylinder-mass"; // Optional field. If this field is not specified then this is a static cylinder shape
 
+    // Capsule shape
+    public static final String CAPSULE_RADIUS = "capsule-radius"; // Mandatory field
+    public static final String CAPSULE_HEIGHT = "capsule-height"; // Mandatory field
+    public static final String CAPSULE_MASS = "capsule-mass"; // Optional field. If this field is not specified then this is a static capsule shape
+
     // Array
     public static final String ARRAY_VERTICES = "array-vertices"; // Mandatory field
     public static final String ARRAY_INDICES = "array-indices"; // Mandatory field

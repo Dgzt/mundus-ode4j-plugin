@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
 import com.github.antzGames.gdx.ode4j.math.DVector3
 import com.github.antzGames.gdx.ode4j.ode.DBox
+import com.github.antzGames.gdx.ode4j.ode.DCapsule
 import com.github.antzGames.gdx.ode4j.ode.DCylinder
 import com.github.antzGames.gdx.ode4j.ode.DSphere
 import com.github.antzGames.gdx.ode4j.ode.DTriMesh
@@ -38,8 +39,8 @@ object ComponentWidgetCreator {
 
     private const val BOX = "Box"
     private const val SPHERE = "Sphere"
-    // TODO capsule
     private const val CYLINDER = "Cylinder"
+    private const val CAPSULE = "Capsule"
     private const val MESH = "Mesh"
     private const val ARRAY = "Array"
 
@@ -57,6 +58,7 @@ object ComponentWidgetCreator {
         types.add(BOX)
         types.add(SPHERE)
         types.add(CYLINDER)
+        types.add(CAPSULE)
         // TODO The rotation of mesh is not good, so fix this first
 //        types.add(MESH)
         types.add(ARRAY)
@@ -71,6 +73,7 @@ object ComponentWidgetCreator {
                 BOX -> changeToBox(component, modelComponent, innerWidgetCell!!)
                 SPHERE -> changeToSphere(component, modelComponent, innerWidgetCell!!)
                 CYLINDER -> changeToCylinder(component, modelComponent, innerWidgetCell!!)
+                CAPSULE -> changeToCapsule(component, modelComponent, innerWidgetCell!!)
                 MESH -> changeToMesh(component, modelComponent, innerWidgetCell!!)
                 ARRAY -> changeToArray(component, innerWidgetCell!!)
                 else -> throw RuntimeException("Unsupported model type!")
@@ -85,6 +88,7 @@ object ComponentWidgetCreator {
             ShapeType.BOX -> addBoxWidgets(component, innerWidgetCell.rootWidget)
             ShapeType.SPHERE -> addSphereWidgets(component, innerWidgetCell.rootWidget)
             ShapeType.CYLINDER -> addCylinderWidgets(component, innerWidgetCell.rootWidget)
+            ShapeType.CAPSULE -> addCapsuleWidgets(component, innerWidgetCell.rootWidget)
             ShapeType.MESH -> addMeshWidgets(component, innerWidgetCell.rootWidget)
             ShapeType.ARRAY -> addArrayWidgets(component, innerWidgetCell.rootWidget)
             else -> throw RuntimeException("Unsupported model type!")
@@ -96,6 +100,7 @@ object ComponentWidgetCreator {
             ShapeType.BOX -> BOX
             ShapeType.SPHERE -> SPHERE
             ShapeType.CYLINDER -> CYLINDER
+            ShapeType.CAPSULE -> CAPSULE
             ShapeType.MESH -> MESH
             ShapeType.ARRAY -> ARRAY
             else -> throw RuntimeException("Unsupported model type!")
@@ -157,6 +162,29 @@ object ComponentWidgetCreator {
         component.geom = OdePhysicsUtils.createCylinder(goPosition, goRotation, radius, height.toDouble())
 
         addCylinderWidgets(component, innerWidgetCell.rootWidget)
+    }
+
+    private fun changeToCapsule(
+        component: Ode4jPhysicsComponent,
+        modelComponent: ModelComponent,
+        innerWidgetCell: RootWidgetCell
+    ) {
+        component.shapeType = ShapeType.CAPSULE
+
+        // Create static capsule geom
+        val goScale = modelComponent.gameObject.getScale(Vector3())
+        val goPosition = modelComponent.gameObject.getPosition(Vector3())
+        val goRotation = modelComponent.gameObject.getRotation(Quaternion())
+        val boundingBox = modelComponent.orientedBoundingBox.bounds
+        val radius = Math.max(boundingBox.width * goScale.x, boundingBox.depth * goScale.z) / 2.0
+        var height = boundingBox.height.toDouble() * goScale.y
+        if (height < radius * 2.0) {
+            height = radius * 2.0
+        }
+
+        component.geom = OdePhysicsUtils.createCapsule(goPosition, goRotation, radius, height)
+
+        addCapsuleWidgets(component, innerWidgetCell.rootWidget)
     }
 
     private fun changeToMesh(
@@ -382,6 +410,70 @@ object ComponentWidgetCreator {
         }
     }
 
+    private fun addCapsuleWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
+        var capsuleGeom = component.geom as DCapsule
+        var radius = capsuleGeom.radius
+        var length = capsuleGeom.length
+
+        var static = component.geom.body == null
+
+        var massParentWidgetCell: RootWidgetCell? = null
+        var mass = if (static) DEFAULT_MASS else capsuleGeom.body.mass.mass
+
+        rootWidget.addCheckbox("Static", static) {
+            radius = capsuleGeom.radius
+            length = capsuleGeom.length
+            destroyBody(component)
+            destroyGeom(component)
+            destroyDebugInstance(component)
+
+            static = it
+            val goPosition = component.gameObject.getPosition(Vector3())
+            val goRotation = component.gameObject.getRotation(Quaternion())
+
+            if (static) {
+                capsuleGeom = OdePhysicsUtils.createCapsule(goPosition, goRotation, radius, length)
+            } else {
+                capsuleGeom = OdePhysicsUtils.createCapsule(goPosition, goRotation, radius, length, mass)
+                component.body = capsuleGeom.body
+            }
+            component.geom = capsuleGeom
+
+            if (static) {
+                massParentWidgetCell?.rootWidget?.clearWidgets()
+            } else {
+                createMassSpinner(massParentWidgetCell!!.rootWidget, mass) { newMass -> run {
+                    mass = newMass
+                    capsuleGeom.body.mass = MassUtils.createCapsuleMass(radius, length, mass)
+                }}
+            }
+        }.setAlign(WidgetAlign.LEFT).setPad(0.0f, 0.0f, STATIC_BOTTOM_PAD, 0.0f)
+        rootWidget.addRow()
+        rootWidget.addLabel("Size:").setAlign(WidgetAlign.LEFT)
+        rootWidget.addRow()
+        rootWidget.addSpinner("Radius", 0.1f, Float.MAX_VALUE, capsuleGeom.radius.toFloat(), 0.1f) {
+            radius = it.toDouble()
+            capsuleGeom.setParams(radius, length)
+            updateDebugInstanceIfNecessary(component, capsuleGeom)
+        }.setAlign(WidgetAlign.LEFT).setPad(0.0f, SIZE_RIGHT_PAD, 0.0f, 0.0f)
+        rootWidget.addSpinner("Height", 0.1f, Float.MAX_VALUE, capsuleGeom.length.toFloat(), 0.1f) {
+            // TODO height should be at least twice radius
+            length = it.toDouble()
+            capsuleGeom.setParams(radius, length)
+            updateDebugInstanceIfNecessary(component, capsuleGeom)
+        }.setAlign(WidgetAlign.LEFT)
+        rootWidget.addEmptyWidget().grow()
+        rootWidget.addRow()
+        massParentWidgetCell = rootWidget.addEmptyWidget()
+        massParentWidgetCell.setAlign(WidgetAlign.LEFT)
+        if (!static) {
+            createMassSpinner(massParentWidgetCell.rootWidget, mass) { newMass -> run {
+                mass = newMass
+                capsuleGeom.body.mass = MassUtils.createCylinderMass(radius, length, mass)
+            }}
+        }
+    }
+
     private fun addMeshWidgets(component: Ode4jPhysicsComponent, rootWidget: RootWidget) {
         var static = component.geom.body == null
 
@@ -580,6 +672,19 @@ object ComponentWidgetCreator {
         val radius = geom.radius
         val height = geom.length
         debugInstance = DebugModelBuilder.createCylinder(radius.toFloat(), height.toFloat())
+        debugInstance.transform.setTranslation(component.gameObject.getPosition(TMP_VECTOR3))
+        component.debugInstance = debugInstance
+    }
+
+    private fun updateDebugInstanceIfNecessary(component: Ode4jPhysicsComponent, geom: DCapsule) {
+        if (component.debugInstance == null) return
+
+        var debugInstance = component.debugInstance
+        debugInstance.model.dispose()
+
+        val radius = geom.radius
+        val height = geom.length
+        debugInstance = DebugModelBuilder.createCapsule(radius.toFloat(), height.toFloat())
         debugInstance.transform.setTranslation(component.gameObject.getPosition(TMP_VECTOR3))
         component.debugInstance = debugInstance
     }
