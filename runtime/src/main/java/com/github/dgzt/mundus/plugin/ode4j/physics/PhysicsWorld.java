@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.github.antzGames.gdx.ode4j.math.DVector4;
 import com.github.antzGames.gdx.ode4j.ode.DBody;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
+import com.github.antzGames.gdx.ode4j.ode.DCapsule;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
 import com.github.antzGames.gdx.ode4j.ode.DHeightfieldData;
 import com.github.antzGames.gdx.ode4j.ode.DHinge2Joint;
@@ -90,6 +91,10 @@ public class PhysicsWorld implements Disposable {
 
     public DCylinder createCylinder(final double radius, final double height) {
         return OdeHelper.createCylinder(space, radius, height);
+    }
+
+    public DCapsule createCapsule(final double radius, final double length) {
+        return OdeHelper.createCapsule(space, radius, length);
     }
 
     public DRay createRay(final double length) {

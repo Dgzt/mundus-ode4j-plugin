@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.github.antzGames.gdx.ode4j.Ode2GdxMathUtils;
 import com.github.antzGames.gdx.ode4j.ode.DBody;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
+import com.github.antzGames.gdx.ode4j.ode.DCapsule;
 import com.github.antzGames.gdx.ode4j.ode.DCylinder;
 import com.github.antzGames.gdx.ode4j.ode.DSphere;
 import com.github.antzGames.gdx.ode4j.ode.DTriMesh;
@@ -197,6 +198,70 @@ public class OdePhysicsUtils {
         }
 
         final DCylinder geom = physicsWorld.createCylinder(geomRadius, geomHeight);
+        if (isStatic(mass)) {
+            geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
+            if (goRotation != null) {
+                geom.setQuaternion(Ode2GdxMathUtils.getOde4jQuaternion(goRotation));
+            }
+        } else {
+            geom.setBody(body);
+        }
+
+        return geom;
+    }
+
+    /**
+     * Creates static capsule shape.
+     *
+     * @param goPosition The position of game object.
+     * @param goRotation The rotation of game object. This can be null.
+     * @param geomRadius The radius value.
+     * @param geomLength The length value.
+     * @return The created capsule shape.
+     */
+    public static DCapsule createCapsule(
+            final Vector3 goPosition,
+            final Quaternion goRotation,
+            final double geomRadius,
+            final double geomLength
+    ) {
+        return createCapsule(goPosition, goRotation, geomRadius, geomLength, INVALID_MASS);
+    }
+
+    /**
+     * Creates capsule shape. If mass is lesser than 0 then it will be static shape.
+     *
+     * @param goPosition The position of game object.
+     * @param goRotation The rotation of game object. This can be null.
+     * @param geomRadius The radius value.
+     * @param geomLength The length value.
+     * @param mass The mass value.
+     * @return The created cylinder shape.
+     */
+    public static DCapsule createCapsule(
+            final Vector3 goPosition,
+            final Quaternion goRotation,
+            final double geomRadius,
+            final double geomLength,
+            final double mass
+    ) {
+        final PhysicsWorld physicsWorld = MundusOde4jRuntimePlugin.getPhysicsWorld();
+
+        final DBody body;
+        if (isStatic(mass)) {
+            body = null;
+        } else {
+            body = physicsWorld.createBody();
+            body.setPosition(goPosition.x, goPosition.y, goPosition.z);
+            if (goRotation != null) {
+                body.setQuaternion(Ode2GdxMathUtils.getOde4jQuaternion(goRotation));
+            }
+
+            body.setMass(MassUtils.createCapsuleMass(geomRadius, geomLength, mass));
+            body.setAutoDisableDefaults();
+        }
+
+        final DCapsule geom = physicsWorld.createCapsule(geomRadius, geomLength);
         if (isStatic(mass)) {
             geom.setPosition(goPosition.x, goPosition.y, goPosition.z);
             if (goRotation != null) {
