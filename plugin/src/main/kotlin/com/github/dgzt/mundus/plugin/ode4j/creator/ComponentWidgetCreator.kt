@@ -420,7 +420,7 @@ object ComponentWidgetCreator {
         var massParentWidgetCell: RootWidgetCell? = null
         var mass = if (static) DEFAULT_MASS else capsuleGeom.body.mass.mass
 
-        var errorMessageWidgeCell: RootWidgetCell? = null
+        var errorMessageWidgetCell: RootWidgetCell? = null
 
         rootWidget.addCheckbox("Static", static) {
             radius = capsuleGeom.radius
@@ -453,29 +453,32 @@ object ComponentWidgetCreator {
         rootWidget.addRow()
         rootWidget.addLabel("Size:").setAlign(WidgetAlign.LEFT)
         rootWidget.addRow()
-        rootWidget.addSpinner("Radius", 0.1f, Float.MAX_VALUE, capsuleGeom.radius.toFloat(), 0.1f) {
-            errorMessageWidgeCell?.rootWidget?.clearWidgets()
+        val radiusAndHeightWidget = rootWidget.addEmptyWidget()
+        radiusAndHeightWidget.grow().setAlign(WidgetAlign.LEFT)
+
+        radiusAndHeightWidget.rootWidget.addSpinner("Radius", 0.1f, Float.MAX_VALUE, capsuleGeom.radius.toFloat(), 0.1f) {
+            errorMessageWidgetCell?.rootWidget?.clearWidgets()
             if (length < 2 * it) {
-                errorMessageWidgeCell?.rootWidget?.addLabel("The height must be at least twice the radius!")
+                errorMessageWidgetCell?.rootWidget?.addLabel("The height must be at least twice the radius!")
             } else {
                 radius = it.toDouble()
                 capsuleGeom.setParams(radius, length)
                 updateDebugInstanceIfNecessary(component, capsuleGeom)
             }
         }.setAlign(WidgetAlign.LEFT).setPad(0.0f, SIZE_RIGHT_PAD, 0.0f, 0.0f)
-        rootWidget.addSpinner("Height", 0.1f, Float.MAX_VALUE, capsuleGeom.length.toFloat(), 0.1f) {
-            errorMessageWidgeCell?.rootWidget?.clearWidgets()
+        radiusAndHeightWidget.rootWidget.addSpinner("Height", 0.1f, Float.MAX_VALUE, capsuleGeom.length.toFloat(), 0.1f) {
+            errorMessageWidgetCell?.rootWidget?.clearWidgets()
             if (it.toDouble() < 2 * radius) {
-                errorMessageWidgeCell?.rootWidget?.addLabel("The height must be at least twice the radius!")
+                errorMessageWidgetCell?.rootWidget?.addLabel("The height must be at least twice the radius!")
             } else {
                 length = it.toDouble()
                 capsuleGeom.setParams(radius, length)
                 updateDebugInstanceIfNecessary(component, capsuleGeom)
             }
         }.setAlign(WidgetAlign.LEFT)
-        rootWidget.addEmptyWidget().grow()
+        radiusAndHeightWidget.rootWidget.addEmptyWidget().grow()
         rootWidget.addRow()
-        errorMessageWidgeCell = rootWidget.addEmptyWidget()
+        errorMessageWidgetCell = rootWidget.addEmptyWidget()
         rootWidget.addRow()
         massParentWidgetCell = rootWidget.addEmptyWidget()
         massParentWidgetCell.setAlign(WidgetAlign.LEFT)
