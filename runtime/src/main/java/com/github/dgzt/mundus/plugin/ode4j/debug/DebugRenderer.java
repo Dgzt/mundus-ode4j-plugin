@@ -3,7 +3,6 @@ package com.github.dgzt.mundus.plugin.ode4j.debug;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.github.antzGames.gdx.ode4j.Ode2GdxMathUtils;
@@ -25,8 +24,6 @@ import com.mbrlabs.mundus.commons.scene3d.components.TerrainComponent;
 import com.mbrlabs.mundus.commons.terrain.Terrain;
 
 public class DebugRenderer {
-
-    private static final Vector3 TMP_VECTOR3 = new Vector3();
 
     private boolean enabled = false;
     private ModelBatch modelBatch;
@@ -67,25 +64,29 @@ public class DebugRenderer {
                         debugInstance.transform.setTranslation((float) geomPosition.get0(), (float) geomPosition.get1(), (float) geomPosition.get2());
                     } else if (ShapeType.BOX == physicsComponent.getShapeType()) {
                         final DBox boxGeom = (DBox) physicsComponent.getGeom();
+                        final DVector3C position = boxGeom.getPosition();
                         final DVector3C lengths = boxGeom.getLengths();
                         debugInstance = DebugModelBuilder.createBox((float) lengths.get0(), (float) lengths.get1(), (float) lengths.get2());
                         debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(boxGeom.getQuaternion()));
-                        debugInstance.transform.setTranslation(gameObject.getPosition(TMP_VECTOR3));
+                        debugInstance.transform.setTranslation((float) position.get0(), (float) position.get1(), (float) position.get2());
                     } else if (ShapeType.SPHERE == physicsComponent.getShapeType()) {
                         final DSphere sphereGeom = (DSphere) physicsComponent.getGeom();
+                        final DVector3C position = sphereGeom.getPosition();
                         debugInstance = DebugModelBuilder.createSphere((float) sphereGeom.getRadius());
                         debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(sphereGeom.getQuaternion()));
-                        debugInstance.transform.setTranslation(gameObject.getPosition(TMP_VECTOR3));
+                        debugInstance.transform.setTranslation((float) position.get0(), (float) position.get1(), (float) position.get2());
                     } else if (ShapeType.CYLINDER == physicsComponent.getShapeType()) {
                         final DCylinder cylinderGeom = (DCylinder) physicsComponent.getGeom();
+                        final DVector3C position = cylinderGeom.getPosition();
                         debugInstance = DebugModelBuilder.createCylinder((float) cylinderGeom.getRadius(), (float) cylinderGeom.getLength());
                         debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(cylinderGeom.getQuaternion()));
-                        debugInstance.transform.setTranslation(gameObject.getPosition(TMP_VECTOR3));
+                        debugInstance.transform.setTranslation((float) position.get0(), (float) position.get1(), (float) position.get2());
                     } else if (ShapeType.CAPSULE == physicsComponent.getShapeType()) {
                         final DCapsule capsuleGeom = (DCapsule) physicsComponent.getGeom();
+                        final DVector3C position = capsuleGeom.getPosition();
                         debugInstance = DebugModelBuilder.createCapsule((float) capsuleGeom.getRadius(), (float) capsuleGeom.getLength());
                         debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(capsuleGeom.getQuaternion()));
-                        debugInstance.transform.setTranslation(gameObject.getPosition(TMP_VECTOR3));
+                        debugInstance.transform.setTranslation((float) position.get0(), (float) position.get1(), (float) position.get2());
                     } else if (ShapeType.MESH == physicsComponent.getShapeType()) {
                         final ModelComponent modelComponent = gameObject.findComponentByType(Component.Type.MODEL);
                         final ModelInstance modelInstance = modelComponent.getModelInstance();
@@ -93,12 +94,13 @@ public class DebugRenderer {
                         debugInstance.transform.mulLeft(physicsComponent.gameObject.getTransform());
                     } else if (ShapeType.ARRAY == physicsComponent.getShapeType()) {
                         final DGeom arrayGeom = physicsComponent.getGeom();
+                        final DVector3C position = arrayGeom.getPosition();
                         final ArrayGeomData arrayGeomData = (ArrayGeomData) arrayGeom.getData();
                         final IntArray indices = arrayGeomData.getIndices();
                         if (indices.notEmpty()) {
                             debugInstance = DebugModelBuilder.createLineMesh(arrayGeomData.getVertices(), indices);
                             debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(arrayGeom.getQuaternion()));
-                            debugInstance.transform.setTranslation(gameObject.getPosition(TMP_VECTOR3));
+                            debugInstance.transform.setTranslation((float) position.get0(), (float) position.get1(), (float) position.get2());
                         }
                     }
                     physicsComponent.setDebugInstance(debugInstance);
