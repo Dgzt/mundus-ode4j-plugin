@@ -3,6 +3,7 @@ package com.github.dgzt.mundus.plugin.ode4j.component;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
 import com.github.antzGames.gdx.ode4j.Ode2GdxMathUtils;
 import com.github.antzGames.gdx.ode4j.math.DVector3C;
 import com.github.antzGames.gdx.ode4j.ode.DBody;
@@ -17,6 +18,10 @@ public class Ode4jPhysicsComponent extends AbstractOde4jPhysicsComponent {
     private DGeom geom;
     // The body can be null if it is a static game object
     private DBody body;
+    // The offset position of game object to physics geom. It can be null.
+    private Vector3 offsetPosition;
+    // The offset quaternion of game object to physics geom. It can be null.
+    private Quaternion offsetQuaternion;
     // The debugInstance can be null. The DebugRenderer will create if necessary
     private ModelInstance debugInstance;
     // User-defined data. It can be null
@@ -38,20 +43,38 @@ public class Ode4jPhysicsComponent extends AbstractOde4jPhysicsComponent {
     @Override
     public void update() {
         if (body != null) {
+            final Quaternion quaternion = Ode2GdxMathUtils.getGdxQuaternion(geom.getQuaternion());
             final DVector3C position = geom.getPosition();
 
-            final float x = (float) position.get0();
-            final float y = (float) position.get1();
-            final float z = (float) position.get2();
+            float quaternionX = quaternion.x;
+            float quaternionY = quaternion.y;
+            float quaternionZ = quaternion.z;
+            float quaternionW = quaternion.w;
 
-            final Quaternion quaternion = Ode2GdxMathUtils.getGdxQuaternion(geom.getQuaternion());
+            if (offsetQuaternion != null) {
+                quaternionX += offsetQuaternion.x;
+                quaternionY += offsetQuaternion.y;
+                quaternionZ += offsetQuaternion.z;
+                quaternionW += offsetQuaternion.w;
+            }
 
-            gameObject.setLocalRotation(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+            float x, debugX, y, debugY, z, debugZ;
+            x = debugX = (float) position.get0();
+            y = debugY = (float) position.get1();
+            z = debugZ = (float) position.get2();
+
+            if (offsetPosition != null) {
+                x += offsetPosition.x;
+                y += offsetPosition.y;
+                z += offsetPosition.z;
+            }
+
+            gameObject.setLocalRotation(quaternionX, quaternionY, quaternionZ, quaternionW);
             gameObject.setLocalPosition(x, y, z);
 
             if (debugInstance != null) {
                 debugInstance.transform.set(quaternion);
-                debugInstance.transform.setTranslation(x, y, z);
+                debugInstance.transform.setTranslation(debugX, debugY, debugZ);
             }
         }
     }
@@ -93,6 +116,36 @@ public class Ode4jPhysicsComponent extends AbstractOde4jPhysicsComponent {
 
     public void setBody(final DBody body) {
         this.body = body;
+    }
+
+    /**
+     * @return The offset position of game object to physics geom.
+     */
+    public Vector3 getOffsetPosition() {
+        return offsetPosition;
+    }
+
+    /**
+     * Sets the offset position of game object to physics geom.
+     * @param offsetPosition The offset position.
+     */
+    public void setOffsetPosition(final Vector3 offsetPosition) {
+        this.offsetPosition = offsetPosition;
+    }
+
+    /**
+     * @return The offset quaternion of game object to physics geom.
+     */
+    public Quaternion getOffsetQuaternion() {
+        return offsetQuaternion;
+    }
+
+    /**
+     * Sets the offset quaternion of game object to physics geom.
+     * @param offsetQuaternion The offset quaternion.
+     */
+    public void setOffsetQuaternion(final Quaternion offsetQuaternion) {
+        this.offsetQuaternion = offsetQuaternion;
     }
 
     public ModelInstance getDebugInstance() {
