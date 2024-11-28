@@ -25,18 +25,13 @@ repositories {
 
 dependencies {
     api("org.pf4j:pf4j:3.10.0")
-    api("com.badlogicgames.gdx:gdx:1.12.0")
+    api("com.badlogicgames.gdx:gdx:1.13.0")
     kapt("org.pf4j:pf4j:3.11.0")
-
-    implementation("com.github.Dgzt.Mundus:commons:plugin-new-component-SNAPSHOT")
-    implementation("com.github.Dgzt.Mundus:plugin-api:plugin-new-component-SNAPSHOT")
-    implementation("com.github.Dgzt.Mundus:editor-commons:plugin-new-component-SNAPSHOT")
-
     api(project(":runtime"))
 
-//    implementation("com.github.jamestkhan.mundus:commons:master-SNAPSHOT")
-//    implementation("com.github.jamestkhan.mundus:plugin-api:master-SNAPSHOT")
-//    implementation("com.github.jamestkhan.mundus:editor-commons:master-SNAPSHOT")
+    implementation("com.github.jamestkhan.mundus:commons:master-SNAPSHOT")
+    implementation("com.github.jamestkhan.mundus:plugin-api:master-SNAPSHOT")
+    implementation("com.github.jamestkhan.mundus:editor-commons:master-SNAPSHOT")
 
     implementation("com.github.quickhull3d:quickhull3d:1.0.0")
     implementation("com.massisframework.j3d:java3d-core:1.6.0.1")
