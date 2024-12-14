@@ -2,9 +2,6 @@
 
 This is an ode4j physics plugin for [Mundus Editor](https://github.com/JamesTKhan/Mundus).
 
-**Until the [PR](https://github.com/JamesTKhan/Mundus/pull/289) will not be merged you need to use
-[my fork](https://github.com/Dgzt/Mundus/tree/plugin-new-component) with `plugin-new-component` branch.**
-
 ## Setup for Editor
 
 You need to build the plugin from source code:
@@ -27,9 +24,9 @@ Add the dependency in your core project:
 allprojects {
     ext {
         ...
-        mundusVersion = 'plugin-new-component-SNAPSHOT'
+        mundusVersion = 'master-SNAPSHOT'
         ode4jPluginVersion = 'master-SNAPSHOT'
-        gltfVersion = '2.1.0' // Only needed if targeting HTML, version should match what Mundus uses
+        gltfVersion = '2.2.1' // Only needed if targeting HTML, version should match what Mundus uses
     }
 }
 
@@ -39,7 +36,7 @@ project(":core") {
     ...
     dependencies {
         ...
-        api "com.github.Dgzt.Mundus:gdx-runtime:$mundusVersion"
+        api "com.github.jamestkhan.mundus:gdx-runtime:$mundusVersion"
         api "com.github.Dgzt:mundus-ode4j-plugin:$ode4jPluginVersion"
     }
 }
@@ -52,8 +49,8 @@ project(":html") {
     ...
     dependencies {
         ...
-        api "com.github.Dgzt.Mundus:gdx-runtime:$mundusVersion:sources"
-        api "com.github.Dgzt.Mundus:commons:$mundusVersion:sources"
+        api "com.github.jamestkhan.mundus:gdx-runtime:$mundusVersion:sources"
+        api "com.github.jamestkhan.mundus:commons:$mundusVersion:sources"
         api "com.github.mgsx-dev.gdx-gltf:gltf:$gltfVersion:sources"
         
         api "com.github.Dgzt:mundus-ode4j-plugin:$ode4jPluginVersion:sources"
