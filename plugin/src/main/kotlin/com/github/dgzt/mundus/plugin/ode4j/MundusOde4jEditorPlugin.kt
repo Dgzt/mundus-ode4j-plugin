@@ -14,7 +14,7 @@ import com.mbrlabs.mundus.pluginapi.CustomShaderRenderExtension
 import com.mbrlabs.mundus.pluginapi.DisposeExtension
 import com.mbrlabs.mundus.pluginapi.EventExtension
 import com.mbrlabs.mundus.pluginapi.MenuExtension
-import com.mbrlabs.mundus.pluginapi.PluginEventManager
+import com.mbrlabs.mundus.pluginapi.manager.PluginEventManager
 import com.mbrlabs.mundus.pluginapi.ui.RootWidget
 import org.pf4j.Extension
 import org.pf4j.Plugin
