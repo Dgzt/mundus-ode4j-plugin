@@ -28,9 +28,9 @@ dependencies {
     api("com.badlogicgames.gdx:gdx:1.12.0")
     kapt("org.pf4j:pf4j:3.11.0")
 
-    implementation("com.github.Dgzt.Mundus:commons:plugin-new-component-terrain-system-SNAPSHOT")
-    implementation("com.github.Dgzt.Mundus:plugin-api:plugin-new-component-terrain-system-SNAPSHOT")
-    implementation("com.github.Dgzt.Mundus:editor-commons:plugin-new-component-terrain-system-SNAPSHOT")
+    implementation("com.github.Dgzt.Mundus:commons:terrain-system-updated-with-plugin-custom-asset-SNAPSHOT")
+    implementation("com.github.Dgzt.Mundus:plugin-api:terrain-system-updated-with-plugin-custom-asset-SNAPSHOT")
+    implementation("com.github.Dgzt.Mundus:editor-commons:terrain-system-updated-with-plugin-custom-asset-SNAPSHOT")
 
     api(project(":runtime"))
 
