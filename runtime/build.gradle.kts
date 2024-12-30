@@ -23,9 +23,9 @@ repositories {
 }
 
 dependencies {
-    api("com.badlogicgames.gdx:gdx:1.13.0")
-    api("com.github.antzGames:gdx-ode4j:master-SNAPSHOT")
-    api("com.github.jamestkhan.mundus:commons:master-SNAPSHOT")
+    api("com.badlogicgames.gdx:gdx:${project.properties["libgdxVersion"]}")
+    api("com.github.antzGames:gdx-ode4j:${project.properties["gdxOde4jVersion"]}")
+    api("com.github.jamestkhan.mundus:commons:${project.properties["mundusVersion"]}")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
