@@ -24,24 +24,24 @@ repositories {
 }
 
 dependencies {
-    api("org.pf4j:pf4j:3.10.0")
-    api("com.badlogicgames.gdx:gdx:1.12.0")
-    kapt("org.pf4j:pf4j:3.11.0")
+    api("org.pf4j:pf4j:${project.properties["pf4jVersion"]}")
+    api("com.badlogicgames.gdx:gdx:${project.properties["libgdxVersion"]}")
+    kapt("org.pf4j:pf4j:${project.properties["pf4jVersion"]}")
 
-    implementation("com.github.Dgzt.Mundus:commons:terrain-system-updated-with-plugin-custom-asset-SNAPSHOT")
-    implementation("com.github.Dgzt.Mundus:plugin-api:terrain-system-updated-with-plugin-custom-asset-SNAPSHOT")
-    implementation("com.github.Dgzt.Mundus:editor-commons:terrain-system-updated-with-plugin-custom-asset-SNAPSHOT")
+    implementation("com.github.Dgzt.Mundus:commons:${project.properties["mundusVersion"]}")
+    implementation("com.github.Dgzt.Mundus:plugin-api:${project.properties["mundusVersion"]}")
+    implementation("com.github.Dgzt.Mundus:editor-commons:${project.properties["mundusVersion"]}")
 
     api(project(":runtime"))
 
-//    implementation("com.github.jamestkhan.mundus:commons:master-SNAPSHOT")
-//    implementation("com.github.jamestkhan.mundus:plugin-api:master-SNAPSHOT")
-//    implementation("com.github.jamestkhan.mundus:editor-commons:master-SNAPSHOT")
+//    implementation("com.github.jamestkhan.mundus:commons:${project.properties["mundusVersion"]}")
+//    implementation("com.github.jamestkhan.mundus:plugin-api:${project.properties["mundusVersion"]}")
+//    implementation("com.github.jamestkhan.mundus:editor-commons:${project.properties["mundusVersion"]}")
 
-    implementation("com.github.quickhull3d:quickhull3d:1.0.0")
-    implementation("com.massisframework.j3d:java3d-core:1.6.0.1")
+    implementation("com.github.quickhull3d:quickhull3d:${project.properties["quickhull3dVersion"]}")
+    implementation("com.massisframework.j3d:java3d-core:${project.properties["java3dCoreVersion"]}")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:${project.properties["junit5Version"]}")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -70,10 +70,10 @@ tasks.withType<Jar> {
         .get()
         .filter {
             it.name.equals("runtime.jar") ||
-            it.name.equals("gdx-ode4j-master-SNAPSHOT.jar") ||
-            it.name.equals("quickhull3d-1.0.0.jar") ||
-            it.name.equals("vecmath-1.6.0.1.jar") ||
-            it.name.equals("java3d-core-1.6.0.1.jar")
+            it.name.equals("gdx-ode4j-${project.properties["gdxOde4jVersion"]}.jar") ||
+            it.name.equals("quickhull3d-${project.properties["quickhull3dVersion"]}.jar") ||
+            it.name.equals("vecmath-${project.properties["java3dCoreVersion"]}.jar") ||
+            it.name.equals("java3d-core-${project.properties["java3dCoreVersion"]}.jar")
         }
         .map(::zipTree)
     from(dependencies)
