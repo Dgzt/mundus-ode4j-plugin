@@ -23,19 +23,9 @@ repositories {
 }
 
 dependencies {
-    api("com.badlogicgames.gdx:gdx:1.12.0")
-
-//    implementation("com.github.Dgzt.Mundus:commons:plugin-new-component-SNAPSHOT")
-//    implementation("com.github.Dgzt.Mundus:plugin-api:plugin-new-component-SNAPSHOT")
-//    implementation("com.github.Dgzt.Mundus:editor-commons:plugin-new-component-SNAPSHOT")
-
-    api("com.github.antzGames:gdx-ode4j:master-SNAPSHOT")
-
-    api("com.github.Dgzt.Mundus:commons:plugin-new-component-terrain-system-SNAPSHOT")
-
-//    implementation("com.github.jamestkhan.mundus:commons:master-SNAPSHOT")
-//    implementation("com.github.jamestkhan.mundus:plugin-api:master-SNAPSHOT")
-//    implementation("com.github.jamestkhan.mundus:editor-commons:master-SNAPSHOT")
+    api("com.badlogicgames.gdx:gdx:${project.properties["libgdxVersion"]}")
+    api("com.github.antzGames:gdx-ode4j:${project.properties["gdxOde4jVersion"]}")
+    api("com.github.Dgzt.Mundus:commons:${project.properties["mundusVersion"]}")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
