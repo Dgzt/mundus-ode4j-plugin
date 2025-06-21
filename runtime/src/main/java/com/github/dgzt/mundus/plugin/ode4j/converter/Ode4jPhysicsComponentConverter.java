@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.github.antzGames.gdx.ode4j.math.DVector3C;
 import com.github.antzGames.gdx.ode4j.ode.DBox;
@@ -18,6 +19,7 @@ import com.github.dgzt.mundus.plugin.ode4j.constant.SaveConstants;
 import com.github.dgzt.mundus.plugin.ode4j.physics.ArrayGeomData;
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType;
 import com.github.dgzt.mundus.plugin.ode4j.util.Ode4jPhysicsComponentUtils;
+import com.mbrlabs.mundus.commons.assets.Asset;
 import com.mbrlabs.mundus.commons.mapper.CustomComponentConverter;
 import com.mbrlabs.mundus.commons.scene3d.GameObject;
 import com.mbrlabs.mundus.commons.scene3d.components.Component;
@@ -103,7 +105,7 @@ public class Ode4jPhysicsComponentConverter implements CustomComponentConverter 
     }
 
     @Override
-    public Component convert(final GameObject gameObject, OrderedMap<String, String> orderedMap) {
+    public Component convert(final GameObject gameObject, final OrderedMap<String, String> orderedMap, final ObjectMap<String, Asset> objectMap) {
         final ShapeType shapeType = ShapeType.valueOf(orderedMap.get(SaveConstants.SHAPE));
 
         final Ode4jPhysicsComponent physicsComponent;
