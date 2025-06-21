@@ -25,7 +25,7 @@ allprojects {
     ext {
         ...
         mundusVersion = 'master-SNAPSHOT'
-        ode4jPluginVersion = 'master-SNAPSHOT'
+        ode4jPluginVersion = '0.5.4.GWT'
         gltfVersion = '2.2.1' // Only needed if targeting HTML, version should match what Mundus uses
     }
 }
@@ -54,7 +54,7 @@ project(":html") {
         api "com.github.mgsx-dev.gdx-gltf:gltf:$gltfVersion:sources"
         
         api "com.github.Dgzt:mundus-ode4j-plugin:$ode4jPluginVersion:sources"
-        api "com.github.antzGames:ode4j:0.5.4.GWT:sources"
+        api "com.github.antzGames:ode4j:$ode4jPluginVersion:sources"
         api "com.github.tommyettinger:formic:0.1.5:sources"
     }
 }
