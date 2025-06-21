@@ -55,7 +55,7 @@ project(":html") {
         
         api "com.github.Dgzt:mundus-ode4j-plugin:$ode4jPluginVersion:sources"
         api "com.github.antzGames:gdx-ode4j:master-SNAPSHOT:sources"
-        api "com.github.tommyettinger:formic:0.1.4:sources"
+        api "com.github.tommyettinger:formic:0.1.5:sources"
     }
 }
 ```
