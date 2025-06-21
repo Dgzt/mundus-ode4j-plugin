@@ -10,7 +10,17 @@ object ComponentCreator {
 
     fun create(gameObject: GameObject): Ode4jPhysicsComponent {
         val physicsComponent: Ode4jPhysicsComponent
-        if (GameObjectUtils.isTerrainGameObject(gameObject)) {
+        if (GameObjectUtils.isTerrainManagerGameObject(gameObject)) {
+            physicsComponent = Ode4jPhysicsComponentUtils.createTerrainSystemPhysicsComponent(gameObject)
+
+            if (!GameObjectUtils.hasPhysicsComponent(gameObject)) {
+                for (childGameObject in gameObject.children) {
+                    if (GameObjectUtils.isTerrainGameObject(childGameObject) && !GameObjectUtils.hasPhysicsComponent(childGameObject)) {
+                        childGameObject.addComponent(Ode4jPhysicsComponentUtils.createTerrainPhysicsComponent(childGameObject))
+                    }
+                }
+            }
+        } else if (GameObjectUtils.isTerrainGameObject(gameObject)) {
             physicsComponent = Ode4jPhysicsComponentUtils.createTerrainPhysicsComponent(gameObject)
         } else if (GameObjectUtils.isModelGameObject(gameObject)) {
             physicsComponent = Ode4jPhysicsComponentUtils.createBoxPhysicsComponent(gameObject)

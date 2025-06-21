@@ -23,10 +23,18 @@ class GameObjectModifiedEventListener : GameObjectModifiedListener {
             return
         }
 
-        val physicsComponent = GameObjectUtils.getPhysicsComponent(gameObject)
-        val geom = physicsComponent.geom
-
-        updatePosition(gameObject, physicsComponent, geom)
+        if (GameObjectUtils.isTerrainManagerGameObject(gameObject)) {
+            // The terrain manager game object children have physics component what has geom and (maybe) debug instance
+            for (childGameObject in gameObject.children) {
+                val physicsComponent = GameObjectUtils.getPhysicsComponent(childGameObject)
+                val geom = physicsComponent.geom
+                updatePosition(childGameObject, physicsComponent, geom)
+            }
+        } else {
+            val physicsComponent = GameObjectUtils.getPhysicsComponent(gameObject)
+            val geom = physicsComponent.geom
+            updatePosition(gameObject, physicsComponent, geom)
+        }
     }
 
     private fun updatePosition(gameObject: GameObject, physicsComponent: Ode4jPhysicsComponent, geom: DGeom) {

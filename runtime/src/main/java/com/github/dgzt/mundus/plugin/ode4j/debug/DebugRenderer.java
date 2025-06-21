@@ -52,16 +52,19 @@ public class DebugRenderer {
 
                     if (ShapeType.TERRAIN == physicsComponent.getShapeType()) {
                         final TerrainComponent terrainComponent = gameObject.findComponentByType(Component.Type.TERRAIN);
-                        final Terrain terrain = terrainComponent.getTerrainAsset().getTerrain();
-                        final DGeom geom = physicsComponent.getGeom();
-                        final DVector3C geomPosition = geom.getPosition();
-                        final int terrainWidth = terrain.terrainWidth;
-                        final int terrainDepth = terrain.terrainDepth;
-                        final int vertexResolution = terrain.vertexResolution;
+                        // If the terrain component is null then the game object is a parent terrain system game object
+                        if (terrainComponent != null) {
+                            final Terrain terrain = terrainComponent.getTerrainAsset().getTerrain();
+                            final DGeom geom = physicsComponent.getGeom();
+                            final DVector3C geomPosition = geom.getPosition();
+                            final int terrainWidth = terrain.terrainWidth;
+                            final int terrainDepth = terrain.terrainDepth;
+                            final int vertexResolution = terrain.vertexResolution;
 
-                        debugInstance = DebugModelBuilder.createTerrain(terrainComponent, terrainWidth, terrainDepth, vertexResolution);
-                        debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(geom.getQuaternion()));
-                        debugInstance.transform.setTranslation((float) geomPosition.get0(), (float) geomPosition.get1(), (float) geomPosition.get2());
+                            debugInstance = DebugModelBuilder.createTerrain(terrainComponent, terrainWidth, terrainDepth, vertexResolution);
+                            debugInstance.transform.set(Ode2GdxMathUtils.getGdxQuaternion(geom.getQuaternion()));
+                            debugInstance.transform.setTranslation((float) geomPosition.get0(), (float) geomPosition.get1(), (float) geomPosition.get2());
+                        }
                     } else if (ShapeType.BOX == physicsComponent.getShapeType()) {
                         final DBox boxGeom = (DBox) physicsComponent.getGeom();
                         final DVector3C position = boxGeom.getPosition();
