@@ -7,12 +7,6 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.OrderedMap;
-import com.github.antzGames.gdx.ode4j.math.DVector3C;
-import com.github.antzGames.gdx.ode4j.ode.DBox;
-import com.github.antzGames.gdx.ode4j.ode.DCapsule;
-import com.github.antzGames.gdx.ode4j.ode.DCylinder;
-import com.github.antzGames.gdx.ode4j.ode.DGeom;
-import com.github.antzGames.gdx.ode4j.ode.DSphere;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
 import com.github.dgzt.mundus.plugin.ode4j.constant.SaveConstants;
@@ -23,6 +17,12 @@ import com.mbrlabs.mundus.commons.assets.Asset;
 import com.mbrlabs.mundus.commons.mapper.CustomComponentConverter;
 import com.mbrlabs.mundus.commons.scene3d.GameObject;
 import com.mbrlabs.mundus.commons.scene3d.components.Component;
+import org.ode4j.math.DVector3C;
+import org.ode4j.ode.DBox;
+import org.ode4j.ode.DCapsule;
+import org.ode4j.ode.DCylinder;
+import org.ode4j.ode.DGeom;
+import org.ode4j.ode.DSphere;
 
 public class Ode4jPhysicsComponentConverter implements CustomComponentConverter {
 

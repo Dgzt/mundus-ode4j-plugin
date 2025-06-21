@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
-import com.github.antzGames.gdx.ode4j.ode.DTriMeshData;
 import com.mbrlabs.mundus.commons.scene3d.GameObject;
+import org.ode4j.ode.DTriMeshData;
 
 public class Utils3D {
 

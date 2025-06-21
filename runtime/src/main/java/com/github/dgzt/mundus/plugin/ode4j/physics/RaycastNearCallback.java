@@ -1,10 +1,11 @@
 package com.github.dgzt.mundus.plugin.ode4j.physics;
 
-import com.github.antzGames.gdx.ode4j.ode.DContact;
-import com.github.antzGames.gdx.ode4j.ode.DContactBuffer;
-import com.github.antzGames.gdx.ode4j.ode.DGeom;
-import com.github.antzGames.gdx.ode4j.ode.DRay;
-import com.github.antzGames.gdx.ode4j.ode.OdeHelper;
+
+import org.ode4j.ode.DContact;
+import org.ode4j.ode.DContactBuffer;
+import org.ode4j.ode.DGeom;
+import org.ode4j.ode.DRay;
+import org.ode4j.ode.OdeHelper;
 
 public class RaycastNearCallback implements DGeom.DNearCallback {
 

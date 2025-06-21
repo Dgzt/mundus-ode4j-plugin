@@ -24,7 +24,7 @@ repositories {
 
 dependencies {
     api("com.badlogicgames.gdx:gdx:${project.properties["libgdxVersion"]}")
-    api("com.github.antzGames:gdx-ode4j:${project.properties["gdxOde4jVersion"]}")
+    api("com.github.antzgames:ode4j:${project.properties["ode4jVersion"]}")
     api("com.github.jamestkhan.mundus:commons:${project.properties["mundusVersion"]}")
 }
 

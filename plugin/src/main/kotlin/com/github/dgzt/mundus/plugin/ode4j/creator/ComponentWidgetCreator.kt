@@ -3,12 +3,6 @@ package com.github.dgzt.mundus.plugin.ode4j.creator
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
-import com.github.antzGames.gdx.ode4j.math.DVector3
-import com.github.antzGames.gdx.ode4j.ode.DBox
-import com.github.antzGames.gdx.ode4j.ode.DCapsule
-import com.github.antzGames.gdx.ode4j.ode.DCylinder
-import com.github.antzGames.gdx.ode4j.ode.DSphere
-import com.github.antzGames.gdx.ode4j.ode.DTriMesh
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent
 import com.github.dgzt.mundus.plugin.ode4j.debug.DebugModelBuilder
@@ -25,6 +19,12 @@ import com.mbrlabs.mundus.pluginapi.ui.Cell
 import com.mbrlabs.mundus.pluginapi.ui.RootWidget
 import com.mbrlabs.mundus.pluginapi.ui.RootWidgetCell
 import com.mbrlabs.mundus.pluginapi.ui.WidgetAlign
+import org.ode4j.math.DVector3
+import org.ode4j.ode.DBox
+import org.ode4j.ode.DCapsule
+import org.ode4j.ode.DCylinder
+import org.ode4j.ode.DSphere
+import org.ode4j.ode.DTriMesh
 
 object ComponentWidgetCreator {
 

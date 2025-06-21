@@ -1,11 +1,12 @@
 package com.github.dgzt.mundus.plugin.ode4j.physics;
 
-import com.github.antzGames.gdx.ode4j.ode.DContact;
-import com.github.antzGames.gdx.ode4j.ode.DContactJoint;
-import com.github.antzGames.gdx.ode4j.ode.DGeom;
-import com.github.antzGames.gdx.ode4j.ode.DJointGroup;
-import com.github.antzGames.gdx.ode4j.ode.DWorld;
-import com.github.antzGames.gdx.ode4j.ode.OdeHelper;
+
+import org.ode4j.ode.DContact;
+import org.ode4j.ode.DContactJoint;
+import org.ode4j.ode.DGeom;
+import org.ode4j.ode.DJointGroup;
+import org.ode4j.ode.DWorld;
+import org.ode4j.ode.OdeHelper;
 
 public abstract class AbstractNearCallback implements DGeom.DNearCallback {
 

@@ -2,13 +2,13 @@ package com.github.dgzt.mundus.plugin.ode4j.component;
 
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.github.antzGames.gdx.ode4j.ode.DBody;
-import com.github.antzGames.gdx.ode4j.ode.DGeom;
 import com.github.dgzt.mundus.plugin.ode4j.component.updater.DefaultOde4jPhysicsComponentUpdater;
 import com.github.dgzt.mundus.plugin.ode4j.component.updater.Ode4jPhysicsComponentUpdater;
 import com.github.dgzt.mundus.plugin.ode4j.type.ShapeType;
 import com.mbrlabs.mundus.commons.scene3d.GameObject;
 import com.mbrlabs.mundus.commons.scene3d.components.Component;
+import org.ode4j.ode.DBody;
+import org.ode4j.ode.DGeom;
 
 public class Ode4jPhysicsComponent extends AbstractOde4jPhysicsComponent {
 

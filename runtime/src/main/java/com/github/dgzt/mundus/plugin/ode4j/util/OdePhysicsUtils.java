@@ -2,17 +2,17 @@ package com.github.dgzt.mundus.plugin.ode4j.util;
 
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import com.github.antzGames.gdx.ode4j.Ode2GdxMathUtils;
-import com.github.antzGames.gdx.ode4j.ode.DBody;
-import com.github.antzGames.gdx.ode4j.ode.DBox;
-import com.github.antzGames.gdx.ode4j.ode.DCapsule;
-import com.github.antzGames.gdx.ode4j.ode.DCylinder;
-import com.github.antzGames.gdx.ode4j.ode.DSphere;
-import com.github.antzGames.gdx.ode4j.ode.DTriMesh;
-import com.github.antzGames.gdx.ode4j.ode.DTriMeshData;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.physics.ArrayGeomData;
 import com.github.dgzt.mundus.plugin.ode4j.physics.PhysicsWorld;
+import org.ode4j.Ode2GdxMathUtils;
+import org.ode4j.ode.DBody;
+import org.ode4j.ode.DBox;
+import org.ode4j.ode.DCapsule;
+import org.ode4j.ode.DCylinder;
+import org.ode4j.ode.DSphere;
+import org.ode4j.ode.DTriMesh;
+import org.ode4j.ode.DTriMeshData;
 
 public class OdePhysicsUtils {
 

@@ -5,13 +5,6 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
-import com.github.antzGames.gdx.ode4j.Ode2GdxMathUtils;
-import com.github.antzGames.gdx.ode4j.math.DVector3C;
-import com.github.antzGames.gdx.ode4j.ode.DBox;
-import com.github.antzGames.gdx.ode4j.ode.DCapsule;
-import com.github.antzGames.gdx.ode4j.ode.DCylinder;
-import com.github.antzGames.gdx.ode4j.ode.DGeom;
-import com.github.antzGames.gdx.ode4j.ode.DSphere;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.component.AbstractOde4jPhysicsComponent;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
@@ -22,6 +15,13 @@ import com.mbrlabs.mundus.commons.scene3d.components.Component;
 import com.mbrlabs.mundus.commons.scene3d.components.ModelComponent;
 import com.mbrlabs.mundus.commons.scene3d.components.TerrainComponent;
 import com.mbrlabs.mundus.commons.terrain.Terrain;
+import org.ode4j.Ode2GdxMathUtils;
+import org.ode4j.math.DVector3C;
+import org.ode4j.ode.DBox;
+import org.ode4j.ode.DCapsule;
+import org.ode4j.ode.DCylinder;
+import org.ode4j.ode.DGeom;
+import org.ode4j.ode.DSphere;
 
 public class DebugRenderer {
 

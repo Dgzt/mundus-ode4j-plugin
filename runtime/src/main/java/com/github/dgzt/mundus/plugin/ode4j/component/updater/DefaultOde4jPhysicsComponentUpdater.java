@@ -2,12 +2,12 @@ package com.github.dgzt.mundus.plugin.ode4j.component.updater;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Quaternion;
-import com.github.antzGames.gdx.ode4j.Ode2GdxMathUtils;
-import com.github.antzGames.gdx.ode4j.math.DVector3C;
-import com.github.antzGames.gdx.ode4j.ode.DBody;
-import com.github.antzGames.gdx.ode4j.ode.DGeom;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
 import com.mbrlabs.mundus.commons.scene3d.GameObject;
+import org.ode4j.Ode2GdxMathUtils;
+import org.ode4j.math.DVector3C;
+import org.ode4j.ode.DBody;
+import org.ode4j.ode.DGeom;
 
 /**
  * Default component updater for {@link Ode4jPhysicsComponent}.

@@ -1,9 +1,10 @@
 package com.github.dgzt.mundus.plugin.ode4j.util;
 
-import com.github.antzGames.gdx.ode4j.math.DVector3C;
-import com.github.antzGames.gdx.ode4j.ode.DMass;
-import com.github.antzGames.gdx.ode4j.ode.DTriMesh;
-import com.github.antzGames.gdx.ode4j.ode.OdeHelper;
+
+import org.ode4j.math.DVector3C;
+import org.ode4j.ode.DMass;
+import org.ode4j.ode.DTriMesh;
+import org.ode4j.ode.OdeHelper;
 
 public class MassUtils {
 

@@ -1,7 +1,8 @@
 package com.github.dgzt.mundus.plugin.ode4j.physics;
 
-import com.github.antzGames.gdx.ode4j.math.DVector3;
-import com.github.antzGames.gdx.ode4j.ode.DGeom;
+
+import org.ode4j.math.DVector3;
+import org.ode4j.ode.DGeom;
 
 public class RaycastResult {
 

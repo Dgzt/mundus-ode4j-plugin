@@ -2,13 +2,13 @@ package com.github.dgzt.mundus.plugin.ode4j.event
 
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
-import com.github.antzGames.gdx.ode4j.Ode2GdxMathUtils
-import com.github.antzGames.gdx.ode4j.ode.DGeom
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent
 import com.github.dgzt.mundus.plugin.ode4j.util.GameObjectUtils
 import com.mbrlabs.mundus.commons.scene3d.GameObject
 import com.mbrlabs.mundus.editorcommons.events.GameObjectModifiedEvent
 import com.mbrlabs.mundus.editorcommons.events.GameObjectModifiedEvent.GameObjectModifiedListener
+import org.ode4j.Ode2GdxMathUtils
+import org.ode4j.ode.DGeom
 
 class GameObjectModifiedEventListener : GameObjectModifiedListener {
 

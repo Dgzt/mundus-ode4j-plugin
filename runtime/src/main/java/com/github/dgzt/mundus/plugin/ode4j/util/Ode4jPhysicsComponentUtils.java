@@ -5,16 +5,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
-import com.github.antzGames.gdx.ode4j.ode.DBox;
-import com.github.antzGames.gdx.ode4j.ode.DCapsule;
-import com.github.antzGames.gdx.ode4j.ode.DCylinder;
-import com.github.antzGames.gdx.ode4j.ode.DHeightfield;
-import com.github.antzGames.gdx.ode4j.ode.DHeightfieldData;
-import com.github.antzGames.gdx.ode4j.ode.DSphere;
-import com.github.antzGames.gdx.ode4j.ode.DTriMesh;
-import com.github.antzGames.gdx.ode4j.ode.DTriMeshData;
-import com.github.antzGames.gdx.ode4j.ode.OdeHelper;
-import com.github.antzGames.gdx.ode4j.ode.internal.DxTrimeshHeightfield;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.component.Ode4jPhysicsComponent;
 import com.github.dgzt.mundus.plugin.ode4j.physics.ArrayGeomData;
@@ -25,6 +15,16 @@ import com.mbrlabs.mundus.commons.scene3d.components.Component;
 import com.mbrlabs.mundus.commons.scene3d.components.ModelComponent;
 import com.mbrlabs.mundus.commons.scene3d.components.TerrainComponent;
 import com.mbrlabs.mundus.commons.terrain.Terrain;
+import org.ode4j.ode.DBox;
+import org.ode4j.ode.DCapsule;
+import org.ode4j.ode.DCylinder;
+import org.ode4j.ode.DHeightfield;
+import org.ode4j.ode.DHeightfieldData;
+import org.ode4j.ode.DSphere;
+import org.ode4j.ode.DTriMesh;
+import org.ode4j.ode.DTriMeshData;
+import org.ode4j.ode.OdeHelper;
+import org.ode4j.ode.internal.DxTrimeshHeightfield;
 
 public class Ode4jPhysicsComponentUtils {
 

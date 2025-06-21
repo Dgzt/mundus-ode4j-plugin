@@ -71,7 +71,7 @@ public class RuntimeConfig {
     }
 
     /**
-     * {@link com.github.antzGames.gdx.ode4j.ode.DWorld#setAngularDamping(double)}
+     * {@link org.ode4j.ode.DWorld#setAngularDamping(double)}
      *
      * @param angularDamping Set the world's angular damping scale.
      */
@@ -84,7 +84,7 @@ public class RuntimeConfig {
     }
 
     /**
-     * {@link com.github.antzGames.gdx.ode4j.ode.DWorld#setAutoDisableFlag(boolean)}
+     * {@link org.ode4j.ode.DWorld#setAutoDisableFlag(boolean)}
      *
      * @param autoDisableFlag Set auto disable flag for newly created bodies.
      */
@@ -97,7 +97,7 @@ public class RuntimeConfig {
     }
 
     /**
-     * {@link com.github.antzGames.gdx.ode4j.ode.DWorld#setAutoDisableLinearThreshold(double)}
+     * {@link org.ode4j.ode.DWorld#setAutoDisableLinearThreshold(double)}
      *
      * @param autoDisableLinearThreshold Set auto disable linear threshold for newly created bodies.
      */
@@ -110,7 +110,7 @@ public class RuntimeConfig {
     }
 
     /**
-     * {@link com.github.antzGames.gdx.ode4j.ode.DWorld#setAutoDisableAngularThreshold(double)}
+     * {@link org.ode4j.ode.DWorld#setAutoDisableAngularThreshold(double)}
      *
      * @param autoDisableAngularThreshold Set auto disable angular threshold for newly created bodies.
      */
@@ -123,7 +123,7 @@ public class RuntimeConfig {
     }
 
     /**
-     * {@link com.github.antzGames.gdx.ode4j.ode.DWorld#setAutoDisableTime(double)}
+     * {@link org.ode4j.ode.DWorld#setAutoDisableTime(double)}
      *
      * @param autoDisableTime Set auto disable time for newly created bodies.
      */
