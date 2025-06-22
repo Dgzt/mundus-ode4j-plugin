@@ -65,7 +65,7 @@ tasks.withType<Jar> {
         .get()
         .filter {
             it.name.equals("runtime.jar") ||
-            it.name.equals("gdx-ode4j-${project.properties["gdxOde4jVersion"]}.jar") ||
+            it.name.equals("ode4j-${project.properties["ode4jVersion"]}.jar") ||
             it.name.equals("quickhull3d-${project.properties["quickhull3dVersion"]}.jar") ||
             it.name.equals("vecmath-${project.properties["java3dCoreVersion"]}.jar") ||
             it.name.equals("java3d-core-${project.properties["java3dCoreVersion"]}.jar")
