@@ -96,3 +96,13 @@ You need to update plugin in render method:
         ...
     }
 ```
+
+## Example
+
+You can try out in the Mundus runtime example project. Clone with `ode4j-plugin` branch:
+
+```shell
+git clone -b ode4j-plugin https://github.com/Dgzt/MundusRuntimeExample.git
+```
+
+Throw shapes with 1,2,3 and 4 keys. `L` key for debug renderer. Full changes [here](https://github.com/Dgzt/MundusRuntimeExample/compare/dev...Dgzt:MundusRuntimeExample:ode4j-plugin)
