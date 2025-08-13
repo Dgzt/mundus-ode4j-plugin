@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.github.dgzt.mundus.plugin.ode4j.MundusOde4jRuntimePlugin;
 import com.github.dgzt.mundus.plugin.ode4j.physics.ArrayGeomData;
 import com.github.dgzt.mundus.plugin.ode4j.physics.PhysicsWorld;
-import org.ode4j.Ode2GdxMathUtils;
 import org.ode4j.ode.DBody;
 import org.ode4j.ode.DBox;
 import org.ode4j.ode.DCapsule;
